@@ -147,16 +147,17 @@ section { padding: 100px 40px; position: relative; }
 #home {
   min-height: 100vh; display: flex; align-items: center;
   padding: calc(var(--nav-h) + 20px) 40px 40px; overflow: hidden; position: relative;
-  background: radial-gradient(circle at 80% 20%, rgba(30, 35, 45, 0.4) 0%, transparent 60%);
+  background: #090a0c;
 }
 #systolic-canvas {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
-  pointer-events: all;
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+  pointer-events: none;
 }
 .hero-inner {
   display: flex; align-items: center; justify-content: space-between;
   gap: 50px; width: 100%; max-width: 1100px; margin: 0 auto;
-  position: relative; z-index: 1;
+  position: relative; z-index: 2;
+  pointer-events: auto;
 }
 .htxt { flex: 1.2; }
 .hbadge {
@@ -1073,10 +1074,10 @@ footer {
       }
     }
 
-    // 2. Draw dual-rail interconnect buses (subtle industrial grey/slate)
+    // 2. Draw dual-rail interconnect buses (crisp industrial slate grid)
     ctx.beginPath();
     ctx.lineWidth = 1;
-    ctx.strokeStyle = 'rgba(75, 85, 99, 0.07)'; // Slate-500 dim
+    ctx.strokeStyle = 'rgba(100, 116, 139, 0.15)'; // Slate-500 clearly visible
     for (let c = 0; c < cols; c++) {
       const x = c * cellSize;
       ctx.moveTo(x - 2, 0); ctx.lineTo(x - 2, height);
@@ -1090,7 +1091,7 @@ footer {
     ctx.stroke();
 
     // 3. Render Processing Element (PE) Cells
-    const peSize = cellSize - 14; // Small square footprint inside cell
+    const peSize = cellSize - 16;
     const halfPe = peSize / 2;
 
     for (let r = 0; r < rows; r++) {
@@ -1104,44 +1105,44 @@ footer {
           const mdx = cx - mouse.x;
           const mdy = cy - mouse.y;
           const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
-          if (mDist < 120) {
-            const proximity = (1 - mDist / 120);
-            pe.activation = Math.max(pe.activation, proximity * 0.85);
-            if (mDist < 40) pe.macActivity = Math.max(pe.macActivity, 0.7);
+          if (mDist < 140) {
+            const proximity = (1 - mDist / 140);
+            pe.activation = Math.max(pe.activation, proximity * 0.95);
+            if (mDist < 45) pe.macActivity = Math.max(pe.macActivity, 0.85);
           }
         }
 
         // Natural decay of activation & MAC state
-        pe.activation *= 0.94;
-        pe.macActivity *= 0.91;
+        pe.activation *= 0.93;
+        pe.macActivity *= 0.90;
 
-        // Base static PE border (dim zinc / graphite)
-        const baseAlpha = 0.04 + pe.activation * 0.35;
-        const slateLum = Math.floor(140 + pe.activation * 85); // 140..225 slate grey to silver
+        // Base static PE border (crisp industrial zinc/slate)
+        const baseAlpha = 0.12 + pe.activation * 0.55;
+        const slateLum = Math.floor(160 + pe.activation * 85);
 
-        ctx.strokeStyle = `rgba(${slateLum}, ${slateLum + 5}, ${slateLum + 12}, ${baseAlpha})`;
-        ctx.lineWidth = pe.activation > 0.3 ? 1.4 : 1;
+        ctx.strokeStyle = `rgba(${slateLum}, ${slateLum + 4}, ${slateLum + 10}, ${baseAlpha})`;
+        ctx.lineWidth = pe.activation > 0.25 ? 1.5 : 1;
         ctx.strokeRect(cx - halfPe, cy - halfPe, peSize, peSize);
 
         // Core accumulator fill on MAC activity
-        if (pe.activation > 0.05 || pe.macActivity > 0.05) {
-          const fillAlpha = (pe.activation * 0.09) + (pe.macActivity * 0.14);
-          ctx.fillStyle = `rgba(216, 222, 233, ${fillAlpha})`; // Pure clean silver
+        if (pe.activation > 0.04 || pe.macActivity > 0.04) {
+          const fillAlpha = (pe.activation * 0.16) + (pe.macActivity * 0.25);
+          ctx.fillStyle = `rgba(226, 232, 240, ${fillAlpha})`; // Pure slate silver
           ctx.fillRect(cx - halfPe + 1, cy - halfPe + 1, peSize - 2, peSize - 2);
         }
 
         // Inner hardware register dot / MAC status indicator
-        const dotAlpha = 0.08 + pe.activation * 0.65;
-        const dotGrey = Math.floor(180 + pe.activation * 65);
+        const dotAlpha = 0.22 + pe.activation * 0.75;
+        const dotGrey = Math.floor(190 + pe.activation * 65);
         ctx.fillStyle = `rgba(${dotGrey}, ${dotGrey}, ${dotGrey}, ${dotAlpha})`;
-        ctx.fillRect(cx - 1, cy - 1, 2, 2);
+        ctx.fillRect(cx - 1.5, cy - 1.5, 3, 3);
       }
     }
 
     // 4. Update and render systolic data packets
     for (let i = 0; i < packets.length; i++) {
       const p = packets[i];
-      p.speed = (1.1 + (i % 3) * 0.6) * clockMultiplier;
+      p.speed = (1.2 + (i % 3) * 0.7) * clockMultiplier;
       
       if (p.axis === 'x') {
         p.x += p.speed;
@@ -1164,15 +1165,15 @@ footer {
       const curR = Math.floor(p.y / cellSize);
       if (curR >= 0 && curR < rows && curC >= 0 && curC < cols) {
         if (peGrid[curR] && peGrid[curR][curC]) {
-          peGrid[curR][curC].activation = Math.max(peGrid[curR][curC].activation, 0.22);
+          peGrid[curR][curC].activation = Math.max(peGrid[curR][curC].activation, 0.35);
         }
       }
 
       // Draw packet pulse in monochrome slate
       ctx.beginPath();
-      const alpha = p.intensity * (0.35 + Math.min(0.4, scrollSpeed * 0.3));
-      ctx.strokeStyle = `rgba(203, 213, 225, ${alpha})`; // Slate-300
-      ctx.lineWidth = 1.4;
+      const alpha = 0.45 + p.intensity * 0.45;
+      ctx.strokeStyle = `rgba(226, 232, 240, ${alpha})`; // Crisp slate-200
+      ctx.lineWidth = 1.8;
 
       if (p.axis === 'x') {
         ctx.moveTo(p.x - p.len, p.y);
@@ -1184,13 +1185,13 @@ footer {
       ctx.stroke();
 
       // Leading bit head
-      ctx.fillStyle = `rgba(241, 245, 249, ${alpha * 1.6})`;
-      ctx.fillRect(p.x - 1.5, p.y - 1.5, 3, 3);
+      ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(1.0, alpha * 1.5)})`;
+      ctx.fillRect(p.x - 2, p.y - 2, 4, 4);
     }
 
-    // Spontaneous gentle background systolic pulse every ~3.5s
-    if (Math.random() < 0.006 && wavefronts.length < 2) {
-      triggerWavefront(0, 0, 0.45);
+    // Spontaneous gentle background systolic pulse every ~2.5s
+    if (Math.random() < 0.009 && wavefronts.length < 2) {
+      triggerWavefront(0, 0, 0.65);
     }
 
     ctx.restore();
@@ -1198,7 +1199,7 @@ footer {
   }
 
   window.addEventListener('resize', resize);
-  window.addEventListener('mousemove', onMouseMove);
+  window.addEventListener('mousemove', onMouseMove, { passive: true });
   window.addEventListener('mouseleave', onMouseLeave);
   window.addEventListener('click', onClick);
   window.addEventListener('scroll', onScroll, { passive: true });
