@@ -421,6 +421,7 @@ footer {
     <li><a href="#projects">Projects</a></li>
     <li><a href="#edu-awards">Background</a></li>
     <li><a href="#contact">Contact</a></li>
+    <li><a href="resume.html" style="color: var(--silver-bright); border-color: var(--border-light);">Resume ↗</a></li>
   </ul>
   <div class="ham" id="ham" onclick="toggleMenu()">
     <span></span><span></span><span></span>
@@ -434,6 +435,7 @@ footer {
   <a href="#projects" onclick="closeMenu()">// Projects</a>
   <a href="#edu-awards" onclick="closeMenu()">// Background</a>
   <a href="#contact" onclick="closeMenu()">// Contact</a>
+  <a href="resume.html">// Resume ↗</a>
 </div>
 
 <!-- HERO -->
@@ -868,9 +870,9 @@ footer {
 <div id="resume-modal" onclick="closeResume(event)">
   <div class="modal-box">
     <div class="modal-bar">
-      <span class="modal-title">Jerome Antony Robin — Resume Preview</span>
+      <span class="modal-title">Jerome Antony Robin — Resume</span>
       <div style="display: flex; gap: 10px; align-items: center;">
-        <a href="https://docs.google.com/document/d/1d2kx3qqXO2QlXLxyhpc1ONt2ZozU4TOqetcYGegORNQ/export?format=docx" class="btn bo" style="padding: 4px 10px; font-size: 11px;">⬇ .DOCX</a>
+        <a href="resume.html" target="_blank" class="btn bo" style="padding: 4px 10px; font-size: 11px;">↗ Open in New Tab</a>
         <button class="modal-btn-close" onclick="closeResumeBtn()">✕ ESC</button>
       </div>
     </div>
@@ -1049,7 +1051,7 @@ function closeMenu() {
 }
 
 // ── RESUME MODAL HANDLER ──
-const DOC_URL = 'https://docs.google.com/document/d/1d2kx3qqXO2QlXLxyhpc1ONt2ZozU4TOqetcYGegORNQ/preview';
+const DOC_URL = 'resume.html';
 
 function openResume() {
   document.getElementById('resume-frame').src = DOC_URL;
