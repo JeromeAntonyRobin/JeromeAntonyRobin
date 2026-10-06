@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jerome Antony Robin | Systems, Silicon & Edge AI</title>
+  <meta name="description" content="Portfolio of Jerome Antony Robin — RTL Design, Systolic Engines, Bare-Metal Runtimes, and Edge AI Systems.">
+  <style>
+    :root {
+      --bg: #09090b;
+      --surface: #121215;
+      --surface-border: #222226;
+      --text-main: #e4e4e7;
+      --text-muted: #8b8b94;
+      --accent: #52525b;
+      --highlight: #fafafa;
+      --tag-bg: #1a1a1f;
+      --tag-border: #2e2e36;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.6;
+      padding: 3rem 1.5rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 860px;
+    }
+
+    header {
+      border-bottom: 1px solid var(--surface-border);
+      padding-bottom: 2rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--highlight);
+    }
+
+    .status {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .status::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    .links {
+      margin-top: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+    }
+
+    a {
+      color: var(--text-main);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent);
+      transition: border-color 0.15s ease, color 0.15s ease;
+    }
+
+    a:hover {
+      color: var(--highlight);
+      border-color: var(--highlight);
+    }
+
+    .bio {
+      margin-top: 1.2rem;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      max-width: 720px;
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    h2 {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    h2::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--surface-border);
+    }
+
+    /* Skills Grid */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .skill-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      padding: 1rem;
+      border-radius: 4px;
+    }
+
+    .skill-title {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--highlight);
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .skill-list {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Experience Timeline */
+    .entry {
+      border-left: 1px solid var(--surface-border);
+      padding-left: 1.25rem;
+      margin-left: 0.5rem;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .entry::before {
+      content: "";
+      position: absolute;
+      left: -4px;
+      top: 6px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      margin-bottom: 0.25rem;
+    }
+
+    .entry-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--highlight);
+    }
+
+    .entry-sub {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .entry-meta {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .entry-body {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .entry-body ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    .entry-body li {
+      margin-bottom: 0.4rem;
+      position: relative;
+      padding-left: 1rem;
+    }
+
+    .entry-body li::before {
+      content: "›";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+    }
+
+    /* Projects Grid */
+    .projects-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .project-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      padding: 1.25rem;
+      border-radius: 4px;
+    }
+
+    .project-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .project-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--highlight);
+    }
+
+    .project-meta {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin: 0.6rem 0;
+    }
+
+    .tag {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      background: var(--tag-bg);
+      border: 1px solid var(--tag-border);
+      color: var(--text-muted);
+      padding: 0.15rem 0.45rem;
+      border-radius: 2px;
+    }
+
+    .project-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .project-metrics {
+      margin-top: 0.6rem;
+      padding-top: 0.6rem;
+      border-top: 1px dashed var(--surface-border);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--highlight);
+    }
+
+    /* List items for Education / Awards */
+    .compact-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .compact-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 0.9rem;
+    }
+
+    .compact-name {
+      color: var(--highlight);
+    }
+
+    .compact-meta {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    footer {
+      border-top: 1px solid var(--surface-border);
+      padding-top: 1.5rem;
+      margin-top: 4rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 1.5rem 1rem;
+      }
+      .title-row, .entry-header, .compact-item {
+        flex-direction: column;
+      }
+      .entry-meta, .compact-meta {
+        margin-top: 0.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <header>
+      <div class="title-row">
+        <h1>Jerome Antony Robin</h1>
+        <span class="status">Chennai, India</span>
+      </div>
+      <p class="bio">
+        Electronics and Communication Engineering student focused on digital ASIC/FPGA acceleration, bare-metal runtime architectures, and low-level Linux systems programming.
+      </p>
+      <div class="links">
+        <a href="https://github.com/JeromeAntonyRobin" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/jerome17" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="mailto:jeromeantomary2006@gmail.com">Email</a>
+        <a href="tel:9841343736">+91 9841343736</a>
+      </div>
+    </header>
+
+    <section id="skills">
+      <h2>Technical Capabilities</h2>
+      <div class="skills-grid">
+        <div class="skill-card">
+          <div class="skill-title">Silicon & FPGA</div>
+          <div class="skill-list">RTL Design (Verilog, VHDL), Libero SoC, Synplify Pro, Vivado/HLS, OpenROAD, Yosys, OpenSTA, Magic VLSI, GHDL, RISC-V (RV32I/M).</div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-title">Embedded Systems & Runtimes</div>
+          <div class="skill-list">V4L2 Drivers, Physical Memory Mapping (/dev/mem), Bare-Metal Runtime Development, RP2040 SDK, Dynamic Memory Arenas, pybind11, CMake.</div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-title">Systems & Binary Engineering</div>
+          <div class="skill-list">Dynamic ELF Patching (DT_VERNEED), GOT Hooking, Android Bionic-to-Glibc Shims, AXI4 / AXI-DMA, Wishbone, UART, SPI, I2C.</div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-title">Hardware Edge AI</div>
+          <div class="skill-list">INT8/FP16 Quantization, Hardware GEMM Engines, BNN Acceleration, TensorRT, Vitis AI, TFLite Micro, PyTorch Training & Pruning, ONNX.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="experience">
+      <h2>Work Experience</h2>
+
+      <div class="entry">
+        <div class="entry-header">
+          <div class="entry-title">e-con Systems</div>
+          <div class="entry-meta">Apr 2026 – Nov 2026 (7 mos)</div>
+        </div>
+        <div class="entry-sub">Edge AI & Embedded Vision Intern · Chennai, India</div>
+        <div class="entry-body">
+          <ul>
+            <li>Engineered a container-free native Linux runtime port of Google’s mobile vision engine for x86_64 and ARM64 via a custom Bionic-to-glibc translation shim.</li>
+            <li>Developed high-throughput, zero-copy C++ and Python SDKs interfacing multi-camera V4L2 video streams directly with embedded neural network backends.</li>
+            <li>Trained, pruned, and fine-tuned edge vision models using PyTorch; executed post-training quantization (INT8/FP16) and deployed optimized pipelines across TensorRT for NVIDIA Jetson and TFLite for edge devices.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-header">
+          <div class="entry-title">Directorate of Research, SRM Group of Institutions</div>
+          <div class="entry-meta">Jan 2026 – Present (10 mos)</div>
+        </div>
+        <div class="entry-sub">Research Intern (FPGA & Systems) · Chennai, India</div>
+        <div class="entry-body">
+          <ul>
+            <li>Developed custom hardware accelerators and compute pipelines using Verilog, VHDL, and Vivado HLS across Xilinx Zynq and Microchip PolarFire FPGA architectures.</li>
+            <li>Ran cycle-accurate RTL verification, testbench simulation, and corner-case functional debug using Vivado, GHDL, and ModelSim.</li>
+            <li>Integrated and evaluated on-chip bus interconnects and protocols, handling AXI4-Lite, AXI-Stream, AXI-DMA, and Wishbone interfaces.</li>
+            <li>Built bare-metal C/C++ runtimes and TFLite Micro inference engines on ARM Cortex-M microcontrollers, implementing static memory arena management.</li>
+            <li>Performed physical board-level validation, timing debug, and hardware-software co-design using logic analyzers, /dev/mem drivers, and Linux interfaces.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-header">
+          <div class="entry-title">The Silis Foundation</div>
+          <div class="entry-meta">Dec 2025 – Present (11 mos)</div>
+        </div>
+        <div class="entry-sub">Lead Developer & Architect · Open Source</div>
+        <div class="entry-body">
+          <ul>
+            <li>Architected Silis to democratize custom silicon design, rejecting fragmented proprietary monoliths in favor of an open, deterministic RTL-to-GDSII workbench that makes physical IC design accessible to beginners.</li>
+            <li>Unified open-source synthesis, place-and-route, timing analysis, and DRC/GDS engines into an automated execution plane using CMake, modern C++, PyQt6, and Python.</li>
+            <li>Engineered native C++ backend engines bound via pybind11 for sub-millisecond physical layout DEF parsing, 60 FPS graphical rendering using OpenGL, and live static timing analysis clock-tree visualizers.</li>
+          </ul>
+        </div>
+      </div>
+
+    </section>
+
+    <section id="projects">
+      <h2>Engineering Projects</h2>
+      <div class="projects-grid">
+
+        <div class="project-card">
+          <div class="project-header">
+            <span class="project-title">PulseGEMM: PolarFire Systolic Engine for CNNs</span>
+            <a href="https://github.com/JeromeAntonyRobin/PulseGEMM" target="_blank" rel="noopener" class="project-meta">github/PulseGEMM ↗</a>
+          </div>
+          <div class="tags">
+            <span class="tag">Verilog</span>
+            <span class="tag">PolarFire SoC</span>
+            <span class="tag">Libero SoC</span>
+            <span class="tag">AXI4 DMA</span>
+            <span class="tag">C Driver</span>
+          </div>
+          <div class="project-desc">
+            High-performance 16x16 INT8 systolic array core targeting PolarFire FPGA fabric with custom AXI4 master DMA engine. Employs double-buffering ping-pong SRAM banks to stream 2D strided activations zero-copy into processing elements.
+          </div>
+          <div class="project-metrics">
+            Metric: 256 MACs/cyc @ 100 MHz · 256 DSPs (87.7% device budget) · 51.58x speedup on ResNet-50 layer
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-header">
+            <span class="project-title">GEMMrv32: RISC-V SoC with Matrix Engine</span>
+            <a href="https://github.com/eatheswar/GEMMrv32" target="_blank" rel="noopener" class="project-meta">github/GEMMrv32 ↗</a>
+          </div>
+          <div class="tags">
+            <span class="tag">VHDL</span>
+            <span class="tag">NEORV32</span>
+            <span class="tag">RISC-V</span>
+            <span class="tag">GHDL</span>
+            <span class="tag">HW/SW Co-Design</span>
+          </div>
+          <div class="project-desc">
+            Integrated a spatial 8x8 systolic GEMM accelerator into the NEORV32 processor Custom Functions Subsystem (CFS). Designed local ping-pong tiling registers and quantified memory bus bottlenecking across 32-bit Wishbone interfaces.
+          </div>
+          <div class="project-metrics">
+            Metric: 64 PEs · 26.2x faster than GCC -O3 loop-unrolled baseline on 16x16 matrices
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-header">
+            <span class="project-title">Silis: Silicon Scaffold IDE</span>
+            <a href="https://github.com/The-Silis-Foundation/silis" target="_blank" rel="noopener" class="project-meta">github/silis ↗</a>
+          </div>
+          <div class="tags">
+            <span class="tag">C++17/20</span>
+            <span class="tag">pybind11</span>
+            <span class="tag">OpenROAD</span>
+            <span class="tag">Yosys</span>
+            <span class="tag">OpenSTA</span>
+          </div>
+          <div class="project-desc">
+            Complete RTL-to-GDSII execution framework bridging discrete open-source synthesis, place-and-route, and timing tools. Integrates custom C++ layout parsers bypassing OpenGL context failures to stream DEF primitives at full framerate.
+          </div>
+          <div class="project-metrics">
+            Metric: 60 FPS layout DEF rendering · Embedded OpenSTA clock tree extraction · Full automated flow
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-header">
+            <span class="project-title">Binarized-YOLO-on-PYNQ</span>
+            <a href="https://github.com/JeromeAntonyRobin/Binarized-YOLO-on-PYNQ" target="_blank" rel="noopener" class="project-meta">github/Binarized-YOLO-on-PYNQ ↗</a>
+          </div>
+          <div class="tags">
+            <span class="tag">Vivado HLS</span>
+            <span class="tag">PYNQ-Z2</span>
+            <span class="tag">Quantization</span>
+            <span class="tag">BNN</span>
+            <span class="tag">AXI-Stream</span>
+          </div>
+          <div class="project-desc">
+            FPGA overlay executing 1-bit weight, 3-bit activation Tinier-YOLO CNN. Swaps high-overhead multiplier DSPs for hardware XNOR and popcount bit-manipulation logic. Modernized memory subsystem to contiguous pynq.allocate drivers.
+          </div>
+          <div class="project-metrics">
+            Metric: ~150x speed multiplier over edge ARM CPU · 20 classes on PASCAL VOC
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-header">
+            <span class="project-title">tinyml-rt-pico: Bare-Metal Edge AI Runtime</span>
+            <a href="https://github.com/JeromeAntonyRobin/tinyml-rt-pico" target="_blank" rel="noopener" class="project-meta">github/tinyml-rt-pico ↗</a>
+          </div>
+          <div class="tags">
+            <span class="tag">C/C++</span>
+            <span class="tag">ARM Assembly</span>
+            <span class="tag">RP2040</span>
+            <span class="tag">TFLite Micro</span>
+            <span class="tag">FatFS</span>
+          </div>
+          <div class="project-desc">
+            Dynamic inference framework decoupling neural network weights from microcontroller flash. Streams models and hierarchical pipelines on demand from an SPI SD card, running multi-stage vision models with an ANSI dashboard.
+          </div>
+          <div class="project-metrics">
+            Metric: Zero-buffer dynamic arena allocations · Strict 264 KB SRAM budget · Hot-swappable models
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="education-awards">
+      <h2>Education & Recognition</h2>
+      <div class="compact-list">
+        <div class="compact-item">
+          <div>
+            <span class="compact-name">Easwari Engineering College</span> — BE, Electronics and Communication Engineering
+          </div>
+          <div class="compact-meta">2024 – 2028 · CGPA: 7.6</div>
+        </div>
+        <div class="compact-item">
+          <div>
+            <span class="compact-name">1st Prize</span> — TechPulse 2026, Easwari Engineering College
+          </div>
+          <div class="compact-meta">Project Presentation</div>
+        </div>
+        <div class="compact-item">
+          <div>
+            <span class="compact-name">2nd Prize</span> — Nexus Chipcraft 2026, RMKCET
+          </div>
+          <div class="compact-meta">EDA / RTL Design Track</div>
+        </div>
+        <div class="compact-item">
+          <div>
+            <span class="compact-name">3rd Prize</span> — Vidyutrenz 2026, CIT
+          </div>
+          <div class="compact-meta">Embedded Systems & Acceleration</div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <span>Jerome Antony Robin</span>
+      <span>Plain HTML/CSS · Hosted on GitHub Pages</span>
+    </footer>
+
+  </div>
+</body>
+</html>

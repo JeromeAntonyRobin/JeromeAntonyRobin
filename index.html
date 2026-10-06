@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Jerome Antony Robin - FPGA & Silicon Acceleration, Systems Architecture, Edge AI Runtimes">
+<meta name="keywords" content="FPGA, Systolic Array, ASIC, RTL Design, PolarFire SoC, RISC-V, Embedded Systems, Edge AI, Silis">
+<title>Jerome Antony Robin | Systems, Silicon & Hardware Acceleration</title>
+
+<!-- Fonts & Script Dependencies -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Industrial Slate / Zinc Palette */
+  --bg-primary: #090a0c;
+  --bg-secondary: #0f1115;
+  --bg-card: #14171d;
+  --bg-card-hover: #1a1e26;
+  --border-dim: #21252d;
+  --border-light: #2e3440;
+  --border-active: #4c566a;
+  
+  --silver-bright: #eceff4;
+  --silver-med: #d8dee9;
+  --text-muted: #8892b0;
+  --text-dim: #5c6370;
+
+  --accent-wire: #717d91;
+  --accent-cyan-dim: #88c0d0;
+  --accent-green-dim: #a3be8c;
+  
+  --ff: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --fm: 'JetBrains Mono', ui-monospace, Menlo, Monaco, Consolas, monospace;
+  --nav-h: 70px;
+  --r: 8px;
+}
+
+html { scroll-behavior: smooth; background: var(--bg-primary); }
+body {
+  background: var(--bg-primary);
+  color: var(--silver-med);
+  font-family: var(--ff);
+  overflow-x: hidden;
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+::selection { background: var(--border-active); color: #fff; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-active); }
+
+/* ── NAVIGATION ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000; height: var(--nav-h);
+  display: flex; align-items: center; justify-content: space-between; padding: 0 60px;
+  background: rgba(9, 10, 12, 0.7); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border-dim);
+  transition: border-color .3s;
+}
+nav.scrolled {
+  background: rgba(9, 10, 12, 0.94);
+  border-bottom-color: var(--border-light);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+.brand {
+  font-family: var(--fm); font-size: 16px; font-weight: 700; color: var(--silver-bright);
+  text-decoration: none; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;
+}
+.brand .dot {
+  display: inline-block; width: 8px; height: 8px; background: var(--accent-green-dim);
+  border-radius: 2px;
+}
+.nav-links { display: flex; gap: 4px; list-style: none; }
+.nav-links a {
+  color: var(--text-muted); text-decoration: none; font-size: 13px; font-family: var(--fm);
+  padding: 8px 14px; border-radius: var(--r); transition: all .2s; border: 1px solid transparent;
+}
+.nav-links a:hover {
+  color: var(--silver-bright); background: var(--bg-secondary); border-color: var(--border-dim);
+}
+.nav-links a.active {
+  color: var(--silver-bright); background: var(--bg-card); border-color: var(--border-light);
+}
+
+.ham { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 6px; }
+.ham span { width: 22px; height: 2px; background: var(--silver-bright); transition: .3s; }
+.ham.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.ham.open span:nth-child(2) { opacity: 0; }
+.ham.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+.drawer {
+  position: fixed; top: var(--nav-h); left: 0; right: 0; z-index: 999;
+  background: var(--bg-secondary); border-bottom: 1px solid var(--border-light);
+  flex-direction: column; padding: 16px 24px;
+  transform: translateY(-120%); transition: transform .3s ease; display: flex;
+}
+.drawer.open { transform: translateY(0); }
+.drawer a {
+  color: var(--text-muted); text-decoration: none; padding: 12px 0; font-family: var(--fm);
+  font-size: 14px; border-bottom: 1px solid var(--border-dim);
+}
+.drawer a:last-child { border-bottom: none; }
+
+/* ── LAYOUT & TYPOGRAPHY ── */
+section { padding: 100px 40px; position: relative; }
+.si { max-width: 1100px; margin: 0 auto; }
+.slabel {
+  font-family: var(--fm); font-size: 11px; color: var(--accent-wire); letter-spacing: 2px;
+  text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;
+}
+.slabel::before { content: '//'; color: var(--text-dim); }
+.stitle {
+  font-size: clamp(26px, 3.5vw, 40px); font-weight: 800; margin-bottom: 48px;
+  color: var(--silver-bright); letter-spacing: -0.5px;
+}
+.stitle span { color: var(--accent-wire); font-weight: 400; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px;
+  font-size: 13px; font-weight: 600; font-family: var(--fm); border-radius: var(--r);
+  text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: all .2s;
+}
+.bp {
+  background: var(--silver-bright); color: var(--bg-primary); border-color: var(--silver-bright);
+}
+.bp:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 4px 16px rgba(255,255,255,0.1); }
+.bo {
+  background: var(--bg-card); color: var(--silver-med); border-color: var(--border-light);
+}
+.bo:hover {
+  background: var(--bg-card-hover); border-color: var(--border-active); color: var(--silver-bright);
+  transform: translateY(-2px);
+}
+
+/* ── HERO ── */
+#home {
+  min-height: 100vh; display: flex; align-items: center;
+  padding: calc(var(--nav-h) + 20px) 40px 40px; overflow: hidden; position: relative;
+  background: radial-gradient(circle at 80% 20%, rgba(30, 35, 45, 0.4) 0%, transparent 60%);
+}
+#systolic-canvas {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
+  pointer-events: all;
+}
+.hero-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 50px; width: 100%; max-width: 1100px; margin: 0 auto;
+  position: relative; z-index: 1;
+}
+.htxt { flex: 1.2; }
+.hbadge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(163, 190, 140, 0.08); border: 1px solid rgba(163, 190, 140, 0.25);
+  border-radius: var(--r); padding: 5px 12px; font-family: var(--fm);
+  font-size: 11px; color: var(--accent-green-dim); margin-bottom: 24px;
+}
+.hbadge .dot {
+  width: 6px; height: 6px; background: var(--accent-green-dim); border-radius: 50%;
+  animation: pulse 2.5s infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.hhi { font-size: 16px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; font-family: var(--fm); }
+.hname {
+  font-size: clamp(38px, 5.5vw, 68px); font-weight: 800; line-height: 1.05;
+  color: var(--silver-bright); letter-spacing: -1.5px; margin-bottom: 16px;
+}
+.hinto {
+  font-size: 16px; color: var(--text-muted); min-height: 28px; font-family: var(--fm);
+  margin-bottom: 20px;
+}
+.hinto .tw { color: var(--silver-bright); font-weight: 600; }
+.hdesc {
+  max-width: 540px; font-size: 14.5px; color: var(--text-muted); line-height: 1.8; margin-bottom: 28px;
+}
+.hdesc strong { color: var(--silver-bright); font-weight: 600; }
+.hbtns { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 36px; }
+
+.pipeline-strip {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  padding: 10px 14px; background: var(--bg-secondary); border: 1px solid var(--border-dim);
+  border-radius: var(--r); max-width: fit-content;
+}
+.pipe-step {
+  font-family: var(--fm); font-size: 11px; color: var(--text-muted); padding: 2px 6px;
+}
+.pipe-step.hi { color: var(--silver-bright); font-weight: 700; background: var(--bg-card); border-radius: 4px; }
+.pipe-arr { color: var(--text-dim); font-size: 11px; }
+
+/* ── SKILLS ── */
+#skills { background: var(--bg-secondary); border-top: 1px solid var(--border-dim); }
+.skills-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;
+}
+.scard {
+  background: var(--bg-card); border: 1px solid var(--border-dim); border-radius: var(--r);
+  padding: 24px; transition: border-color .2s, transform .2s;
+}
+.scard:hover { border-color: var(--border-active); transform: translateY(-3px); }
+.scard-head {
+  font-family: var(--fm); font-size: 13px; font-weight: 600; color: var(--silver-bright);
+  margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+}
+.stags { display: flex; flex-wrap: wrap; gap: 6px; }
+.stag {
+  font-family: var(--fm); font-size: 11px; padding: 4px 8px; border-radius: 4px;
+  background: var(--bg-primary); border: 1px solid var(--border-dim); color: var(--text-muted);
+}
+.stag.hi { color: var(--silver-bright); border-color: var(--border-light); }
+
+/* ── EXPERIENCE TIMELINE (ANIMATED) ── */
+#experience { border-top: 1px solid var(--border-dim); background: var(--bg-primary); }
+.timeline { position: relative; max-width: 900px; margin: 0 auto; padding: 40px 0; }
+.timeline::before {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 2px;
+  background: var(--border-dim); transform: translateX(-50%);
+}
+
+.tl-item {
+  position: relative; width: 50%; padding: 20px 40px; opacity: 0;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.tl-item:nth-child(odd) { left: 0; text-align: right; transform: translateX(-40px); }
+.tl-item:nth-child(even) { left: 50%; text-align: left; transform: translateX(40px); }
+
+/* The dot on the center line */
+.tl-item::before {
+  content: ''; position: absolute; top: 32px; width: 14px; height: 14px;
+  background: var(--bg-card); border: 2px solid var(--border-active); border-radius: 50%;
+  z-index: 1; transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+.tl-item:nth-child(odd)::before { right: -7px; }
+.tl-item:nth-child(even)::before { left: -7px; }
+
+/* Visible State */
+.tl-item.visible { opacity: 1; transform: translateX(0); }
+.tl-item.visible::before { 
+  background: var(--accent-cyan-dim); 
+  border-color: var(--accent-cyan-dim);
+  box-shadow: 0 0 10px rgba(136, 192, 208, 0.4); 
+}
+
+.tl-content {
+  background: var(--bg-card); border: 1px solid var(--border-dim); padding: 24px;
+  border-radius: var(--r); position: relative; display: inline-block; width: 100%; text-align: left;
+  transition: border-color .2s, transform .2s, box-shadow .2s;
+}
+.tl-content:hover { 
+  border-color: var(--border-active); 
+  transform: translateY(-3px); 
+  background: var(--bg-card-hover);
+}
+
+.tl-role { font-size: 16px; font-weight: 700; color: var(--silver-bright); line-height: 1.3; }
+.tl-org { font-size: 14px; font-weight: 600; color: var(--accent-cyan-dim); margin-top: 4px; margin-bottom: 4px; font-family: var(--fm); }
+.tl-meta { font-family: var(--fm); font-size: 11.5px; color: var(--text-dim); margin-bottom: 12px; }
+.tl-desc { font-size: 13.5px; color: var(--text-muted); line-height: 1.6; }
+.tl-desc ul { list-style: none; padding-left: 0; }
+.tl-desc li { position: relative; padding-left: 14px; margin-bottom: 6px; }
+.tl-desc li::before { content: '▪'; position: absolute; left: 0; color: var(--border-active); }
+
+/* ── PROJECTS ── */
+#projects { background: var(--bg-secondary); border-top: 1px solid var(--border-dim); }
+.projects-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;
+}
+.pcard {
+  background: var(--bg-card); border: 1px solid var(--border-dim); border-radius: var(--r);
+  padding: 26px; display: flex; flex-direction: column; justify-content: space-between;
+  transition: all .2s;
+}
+.pcard:hover {
+  border-color: var(--border-active); transform: translateY(-3px);
+  background: var(--bg-card-hover);
+}
+.pcard-top { margin-bottom: 14px; }
+.pcard-title-row {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+  margin-bottom: 8px;
+}
+.pcard-title { font-size: 16px; font-weight: 700; color: var(--silver-bright); }
+.pcard-link {
+  font-family: var(--fm); font-size: 11px; color: var(--silver-med);
+  text-decoration: none; padding: 4px 8px; border: 1px solid var(--border-light);
+  border-radius: 4px; background: var(--bg-secondary); transition: .2s;
+}
+.pcard-link:hover { border-color: var(--silver-bright); color: #fff; }
+.pcard-desc { font-size: 13px; color: var(--text-muted); line-height: 1.65; margin-bottom: 16px; flex: 1; }
+.pcard-metric {
+  font-family: var(--fm); font-size: 11px; padding: 8px 12px;
+  background: var(--bg-primary); border: 1px solid var(--border-dim);
+  border-left: 2px solid var(--accent-wire); border-radius: 4px;
+  color: var(--silver-med); margin-bottom: 16px;
+}
+.pcard-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* ── EDUCATION & AWARDS ── */
+#edu-awards { border-top: 1px solid var(--border-dim); }
+.split-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; }
+.sub-panel {
+  background: var(--bg-card); border: 1px solid var(--border-dim); border-radius: var(--r);
+  padding: 24px;
+}
+.sub-panel h3 {
+  font-family: var(--fm); font-size: 13px; color: var(--accent-wire); margin-bottom: 16px;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.edu-item { margin-bottom: 16px; }
+.edu-deg { font-size: 15px; font-weight: 700; color: var(--silver-bright); }
+.edu-inst { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
+.edu-meta { font-family: var(--fm); font-size: 11px; color: var(--text-dim); }
+
+.award-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.award-item {
+  display: flex; justify-content: space-between; align-items: baseline; font-size: 13px;
+  border-bottom: 1px solid var(--border-dim); padding-bottom: 8px;
+}
+.award-item:last-child { border-bottom: none; }
+.award-name { color: var(--silver-med); font-weight: 500; }
+.award-org { font-family: var(--fm); font-size: 11px; color: var(--text-dim); }
+
+/* ── CONTACT ── */
+#contact { background: var(--bg-secondary); border-top: 1px solid var(--border-dim); }
+.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.contact-meta p { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.8; }
+.contact-links { display: flex; flex-direction: column; gap: 10px; }
+.c-link {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; background: var(--bg-card); border: 1px solid var(--border-dim);
+  border-radius: var(--r); color: var(--silver-med); text-decoration: none;
+  font-family: var(--fm); font-size: 12.5px; transition: .2s;
+}
+.c-link:hover { border-color: var(--border-active); background: var(--bg-card-hover); color: var(--silver-bright); }
+
+.contact-form {
+  background: var(--bg-card); border: 1px solid var(--border-dim); border-radius: var(--r);
+  padding: 24px;
+}
+.fg { margin-bottom: 14px; }
+.fg label {
+  display: block; font-family: var(--fm); font-size: 11px; color: var(--text-dim);
+  text-transform: uppercase; margin-bottom: 6px; letter-spacing: 1px;
+}
+.fg input, .fg textarea {
+  width: 100%; background: var(--bg-primary); border: 1px solid var(--border-dim);
+  border-radius: var(--r); padding: 10px 14px; font-size: 13.5px; font-family: var(--ff);
+  color: var(--silver-bright); outline: none; transition: border-color .2s;
+}
+.fg input:focus, .fg textarea:focus { border-color: var(--border-active); }
+.fg textarea { resize: vertical; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border-dim); padding: 36px 40px; font-family: var(--fm);
+  font-size: 11px; color: var(--text-dim); display: flex; justify-content: space-between;
+  align-items: center; max-width: 1100px; margin: 0 auto;
+}
+
+/* ── RESUME MODAL ── */
+#resume-modal {
+  position: fixed; inset: 0; z-index: 9000; background: rgba(9, 10, 12, 0.85);
+  backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center;
+  padding: 20px;
+}
+#resume-modal.open { display: flex; }
+.modal-box {
+  background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--r);
+  width: 100%; max-width: 880px; height: 85vh; display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.modal-bar {
+  display: flex; justify-content: space-between; align-items: center; padding: 12px 18px;
+  background: var(--bg-secondary); border-bottom: 1px solid var(--border-dim);
+}
+.modal-title { font-family: var(--fm); font-size: 12px; color: var(--silver-bright); }
+.modal-btn-close {
+  background: none; border: 1px solid var(--border-dim); color: var(--text-muted);
+  font-family: var(--fm); font-size: 14px; cursor: pointer; padding: 4px 8px;
+  border-radius: 4px; transition: .2s;
+}
+.modal-btn-close:hover { color: #fff; border-color: var(--border-active); }
+.modal-frame { flex: 1; border: none; width: 100%; background: #1e1e1e; }
+
+/* ── RESPONSIVE TIMELINE & LAYOUT ── */
+@media (max-width: 860px) {
+  nav { padding: 0 24px; }
+  section { padding: 70px 20px; }
+  .nav-links { display: none; }
+  .ham { display: flex; }
+  .hero-inner { flex-direction: column; gap: 32px; }
+  .split-grid, .contact-grid { grid-template-columns: 1fr; gap: 24px; }
+  footer { flex-direction: column; gap: 12px; text-align: center; }
+
+  /* Mobile Timeline adjustments */
+  .timeline::before { left: 24px; }
+  .tl-item { width: 100%; padding: 20px 0 20px 48px; }
+  .tl-item:nth-child(odd), .tl-item:nth-child(even) { text-align: left; left: 0; transform: translateX(20px); }
+  .tl-item:nth-child(odd)::before, .tl-item:nth-child(even)::before { left: 18px; right: auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav id="navbar">
+  <a href="#home" class="brand"><span class="dot"></span>JEROME.A.ROBIN</a>
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#edu-awards">Background</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="ham" id="ham" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<div class="drawer" id="drawer">
+  <a href="#home" onclick="closeMenu()">// Home</a>
+  <a href="#skills" onclick="closeMenu()">// Skills</a>
+  <a href="#experience" onclick="closeMenu()">// Experience</a>
+  <a href="#projects" onclick="closeMenu()">// Projects</a>
+  <a href="#edu-awards" onclick="closeMenu()">// Background</a>
+  <a href="#contact" onclick="closeMenu()">// Contact</a>
+</div>
+
+<!-- HERO -->
+<section id="home">
+  <canvas id="systolic-canvas"></canvas>
+  <div class="hero-inner">
+    <div class="htxt">
+      <div class="hbadge"><span class="dot"></span>Ready for Silicon / Systems Engineering</div>
+      <div class="hhi">Jerome Antony Robin</div>
+      <h1 class="hname">Hardware Acceleration &amp; Systems</h1>
+      <div class="hinto">Focused on <span class="tw" id="typewriter"></span></div>
+      <p class="hdesc">
+        Electronics &amp; Communication Engineering student engineering custom <strong>systolic GEMM accelerators</strong>, bare-metal microcontroller runtimes, and Linux-integrated edge AI pipelines across Microchip PolarFire, Xilinx Zynq, and NVIDIA Jetson platforms.
+      </p>
+      
+      <div class="pipeline-strip">
+        <span class="pipe-step hi">RTL (Verilog/VHDL)</span>
+        <span class="pipe-arr">→</span>
+        <span class="pipe-step">AXI4-DMA / CFS</span>
+        <span class="pipe-arr">→</span>
+        <span class="pipe-step">Linux Driver (/dev/mem)</span>
+        <span class="pipe-arr">→</span>
+        <span class="pipe-step hi">Edge AI Inference</span>
+      </div>
+
+      <div class="hbtns" style="margin-top: 28px;">
+        <button onclick="openResume()" class="btn bp">📄 View Resume</button>
+        <a href="#projects" class="btn bo">Explore RTL &amp; Silicon</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="si">
+    <div class="slabel">Toolchains &amp; Execution Planes</div>
+    <h2 class="stitle">Technical <span>Capabilities</span></h2>
+    <div class="skills-grid">
+      
+      <div class="scard" data-aos="fade-up">
+        <div class="scard-head">Silicon &amp; FPGA</div>
+        <div class="stags">
+          <span class="stag hi">Verilog / VHDL</span>
+          <span class="stag hi">Microchip Libero SoC</span>
+          <span class="stag">Synplify Pro</span>
+          <span class="stag hi">Xilinx Vivado / HLS</span>
+          <span class="stag">OpenROAD Flow</span>
+          <span class="stag">Yosys</span>
+          <span class="stag">OpenSTA</span>
+          <span class="stag">GHDL</span>
+          <span class="stag hi">RISC-V (RV32I/M)</span>
+        </div>
+      </div>
+
+      <div class="scard" data-aos="fade-up" data-aos-delay="60">
+        <div class="scard-head">Bus Architectures &amp; IP</div>
+        <div class="stags">
+          <span class="stag hi">AXI4 Full / Master</span>
+          <span class="stag">AXI4-Lite</span>
+          <span class="stag">AXI-Stream</span>
+          <span class="stag hi">AXI-DMA</span>
+          <span class="stag">Wishbone</span>
+          <span class="stag">UART</span>
+          <span class="stag">SPI / I2C</span>
+          <span class="stag">Ping-Pong Buffering</span>
+        </div>
+      </div>
+
+      <div class="scard" data-aos="fade-up" data-aos-delay="120">
+        <div class="scard-head">Embedded Systems &amp; Low-Level</div>
+        <div class="stags">
+          <span class="stag hi">Linux Drivers (V4L2)</span>
+          <span class="stag hi">/dev/mem &amp; MMAP</span>
+          <span class="stag">RP2040 Pico SDK</span>
+          <span class="stag">ARM Cortex-M0+ ASM</span>
+          <span class="stag">Dynamic Memory Arenas</span>
+          <span class="stag hi">pybind11</span>
+          <span class="stag">CMake</span>
+          <span class="stag">Git</span>
+        </div>
+      </div>
+
+      <div class="scard" data-aos="fade-up" data-aos-delay="180">
+        <div class="scard-head">Edge AI &amp; Binary Engineering</div>
+        <div class="stags">
+          <span class="stag hi">INT8 / FP16 Quantization</span>
+          <span class="stag">Systolic GEMM Cores</span>
+          <span class="stag">BNN (XNOR/Popcount)</span>
+          <span class="stag hi">NVIDIA TensorRT</span>
+          <span class="stag">Vitis AI</span>
+          <span class="stag">TFLite Micro</span>
+          <span class="stag">ELF Patching</span>
+          <span class="stag">GOT Hooking</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ANIMATED TIMELINE -->
+<section id="experience">
+  <div class="si">
+    <div class="slabel">Track Record</div>
+    <h2 class="stitle">Engineering <span>Experience</span></h2>
+    <div class="timeline">
+
+      <!-- Timeline Item 1 -->
+      <div class="tl-item">
+        <div class="tl-content">
+          <div class="tl-role">Research and Outreach Head</div>
+          <div class="tl-org">Students Society of ECE</div>
+          <div class="tl-meta">Aug 2026 – Present (3 mos) | Chennai - On-site</div>
+        </div>
+      </div>
+
+      <!-- Timeline Item 2 -->
+      <div class="tl-item">
+        <div class="tl-content">
+          <div class="tl-role">Intern (Edge AI &amp; Embedded Vision)</div>
+          <div class="tl-org">e-con Systems</div>
+          <div class="tl-meta">Apr 2026 – Nov 2026 (7 mos) | Chennai - Hybrid</div>
+          <div class="tl-desc">
+            <ul>
+              <li>Engineered a container-free native Linux runtime port of Google’s mobile vision engine for x86_64 and ARM64 platforms via a custom Bionic-to-glibc translation shim.</li>
+              <li>Developed high-throughput, zero-copy C++ and Python SDKs interfacing multi-camera V4L2 video streams directly with embedded neural network backends.</li>
+              <li>Trained, pruned, and fine-tuned edge vision models using PyTorch; executed post-training quantization (INT8/FP16) and deployed optimized pipelines across TensorRT for NVIDIA Jetson and TFLite for edge devices.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline Item 3 -->
+      <div class="tl-item">
+        <div class="tl-content">
+          <div class="tl-role">Research Intern (FPGA &amp; Systems)</div>
+          <div class="tl-org">Directorate of Research, SRM Group</div>
+          <div class="tl-meta">Mar 2026 – Present (8 mos) | Chennai - On-site</div>
+          <div class="tl-desc">
+            <ul>
+              <li>Developed custom hardware accelerators and compute pipelines using Verilog, VHDL, and Vivado HLS across Xilinx Zynq and Microchip PolarFire FPGA architectures.</li>
+              <li>Ran cycle-accurate RTL verification, testbench simulation, and corner-case functional debug using Vivado, GHDL, and ModelSim.</li>
+              <li>Integrated and evaluated on-chip bus interconnects and protocols, handling AXI4-Lite, AXI-Stream, AXI-DMA, and Wishbone interfaces.</li>
+              <li>Built bare-metal C/C++ runtimes and TFLite Micro inference engines on ARM Cortex-M microcontrollers, implementing static memory arena management.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline Item 4 -->
+      <div class="tl-item">
+        <div class="tl-content">
+          <div class="tl-role">Lead Developer &amp; Architect</div>
+          <div class="tl-org">The Silis Foundation</div>
+          <div class="tl-meta">Jan 2026 – Present (10 mos) | Open Source</div>
+          <div class="tl-desc">
+            <ul>
+              <li>Architected Silis to democratize custom silicon design, rejecting fragmented proprietary monoliths in favor of an open, deterministic RTL-to-GDSII workbench that makes physical IC design accessible to beginners.</li>
+              <li>Unified open-source synthesis, place-and-route, timing analysis, and DRC/GDS engines into an automated execution plane using CMake, modern C++, PyQt6, and Python.</li>
+              <li>Engineered native C++ backend engines bound via pybind11 for sub-millisecond physical layout DEF parsing, 60 FPS graphical rendering, and live static timing analysis clock-tree visualizers.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline Item 5 -->
+      <div class="tl-item">
+        <div class="tl-content">
+          <div class="tl-role">Student's Council President</div>
+          <div class="tl-org">Holy Cross Matriculation HSS</div>
+          <div class="tl-meta">Jul 2023 – May 2024 (11 mos) | Chennai</div>
+        </div>
+      </div>
+
+      <!-- Timeline Item 6 -->
+      <div class="tl-item">
+        <div class="tl-content">
+          <div class="tl-role">Student's Council Vice-President</div>
+          <div class="tl-org">Holy Cross Matriculation HSS</div>
+          <div class="tl-meta">Jul 2022 – May 2023 (11 mos) | Chennai</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="si">
+    <div class="slabel">Verified Silicon &amp; Hardware Implementations</div>
+    <h2 class="stitle">Featured <span>Projects</span></h2>
+    <div class="projects-grid">
+
+      <div class="pcard" data-aos="fade-up">
+        <div class="pcard-top">
+          <div class="pcard-title-row">
+            <span class="pcard-title">PulseGEMM (PolarFire SoC)</span>
+            <a href="https://github.com/JeromeAntonyRobin/PulseGEMM" target="_blank" rel="noopener" class="pcard-link">GitHub ↗</a>
+          </div>
+          <p class="pcard-desc">
+            Layer-wise 16x16 INT8 systolic compute engine optimized for the Microchip PolarFire SoC. Integrated with a 64-bit AXI4 master DMA engine with ping-pong SRAM buffering for zero-copy 2D strided activation extraction.
+          </p>
+        </div>
+        <div>
+          <div class="pcard-metric">
+            256 MACs/cyc @ 100 MHz · 256 DSPs (87.7%) · 51.58x ResNet-50 speedup
+          </div>
+          <div class="pcard-tags">
+            <span class="stag">Verilog</span>
+            <span class="stag">PolarFire</span>
+            <span class="stag">AXI4-DMA</span>
+            <span class="stag">/dev/mem</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pcard" data-aos="fade-up" data-aos-delay="60">
+        <div class="pcard-top">
+          <div class="pcard-title-row">
+            <span class="pcard-title">GEMMrv32 (RISC-V Coprocessor)</span>
+            <a href="https://github.com/eatheswar/GEMMrv32" target="_blank" rel="noopener" class="pcard-link">GitHub ↗</a>
+          </div>
+          <p class="pcard-desc">
+            Spatial 8x8 systolic-array matrix multiplier integrated directly into the NEORV32 RISC-V processor Custom Functions Subsystem (CFS) with local ping-pong data tiling registers.
+          </p>
+        </div>
+        <div>
+          <div class="pcard-metric">
+            64 PEs · 26.2x faster than GCC -O3 loop-unrolled baseline on RV32
+          </div>
+          <div class="pcard-tags">
+            <span class="stag">VHDL</span>
+            <span class="stag">RISC-V</span>
+            <span class="stag">GHDL</span>
+            <span class="stag">HW/SW Co-Design</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pcard" data-aos="fade-up" data-aos-delay="120">
+        <div class="pcard-top">
+          <div class="pcard-title-row">
+            <span class="pcard-title">Silis: RTL-to-GDSII IDE</span>
+            <a href="https://github.com/The-Silis-Foundation/silis" target="_blank" rel="noopener" class="pcard-link">GitHub ↗</a>
+          </div>
+          <p class="pcard-desc">
+            Modular ASIC design environment integrating Yosys, OpenROAD, OpenSTA, and Magic VLSI. Features native C++ DEF parsing engines bound via pybind11 to render chip layouts at 60 FPS.
+          </p>
+        </div>
+        <div>
+          <div class="pcard-metric">
+            Automated RTL→GDSII Flow · Zero-Friction Open-Source Tapeout
+          </div>
+          <div class="pcard-tags">
+            <span class="stag">C++17/20</span>
+            <span class="stag">PyQt6</span>
+            <span class="stag">OpenROAD</span>
+            <span class="stag">Yosys</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pcard" data-aos="fade-up">
+        <div class="pcard-top">
+          <div class="pcard-title-row">
+            <span class="pcard-title">Binarized-YOLO on PYNQ</span>
+            <a href="https://github.com/JeromeAntonyRobin/Binarized-YOLO-on-PYNQ" target="_blank" rel="noopener" class="pcard-link">GitHub ↗</a>
+          </div>
+          <p class="pcard-desc">
+            Hardware-accelerated 1-bit weight, 3-bit activation Tinier-YOLO CNN overlay on Xilinx Zynq-7000. Replaces multiplier DSPs with raw XNOR-popcount logic gates via Vivado HLS streaming cores.
+          </p>
+        </div>
+        <div>
+          <div class="pcard-metric">
+            ~150x speed multiplier over ARM CPU · Modernized pynq.allocate DMA
+          </div>
+          <div class="pcard-tags">
+            <span class="stag">Vivado HLS</span>
+            <span class="stag">PYNQ-Z2</span>
+            <span class="stag">BNN</span>
+            <span class="stag">AXI-Stream</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pcard" data-aos="fade-up" data-aos-delay="60">
+        <div class="pcard-top">
+          <div class="pcard-title-row">
+            <span class="pcard-title">tinyml-rt-pico</span>
+            <a href="https://github.com/JeromeAntonyRobin/tinyml-rt-pico" target="_blank" rel="noopener" class="pcard-link">GitHub ↗</a>
+          </div>
+          <p class="pcard-desc">
+            Bare-metal AI execution framework for RP2040 microcontrollers decoupling neural network models from firmware. Streams .tflite weights and pipelines on-demand from SPI SD cards into static memory arenas.
+          </p>
+        </div>
+        <div>
+          <div class="pcard-metric">
+            Deterministic zero-heap arena · Multi-model hot swapping in 264KB SRAM
+          </div>
+          <div class="pcard-tags">
+            <span class="stag">C/C++</span>
+            <span class="stag">RP2040</span>
+            <span class="stag">TFLite Micro</span>
+            <span class="stag">FatFS</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pcard" data-aos="fade-up" data-aos-delay="120">
+        <div class="pcard-top">
+          <div class="pcard-title-row">
+            <span class="pcard-title">mlkit-barcode-linux</span>
+            <a href="https://github.com/JeromeAntonyRobin/mlkit-barcode-linux" target="_blank" rel="noopener" class="pcard-link">GitHub ↗</a>
+          </div>
+          <p class="pcard-desc">
+            Container-free Linux translation shim running Google ML Kit's proprietary engine directly on Ubuntu and NVIDIA Jetson without virtual machines or Android runtime emulators.
+          </p>
+        </div>
+        <div>
+          <div class="pcard-metric">
+            Bionic-to-glibc shim · DT_VERNEED patching · Direct V4L2 streaming
+          </div>
+          <div class="pcard-tags">
+            <span class="stag">C++</span>
+            <span class="stag">Linux APIs</span>
+            <span class="stag">V4L2</span>
+            <span class="stag">Jetson Orin</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION & AWARDS -->
+<section id="edu-awards">
+  <div class="si">
+    <div class="slabel">Academic Verification</div>
+    <h2 class="stitle">Education &amp; <span>Awards</span></h2>
+    <div class="split-grid">
+      
+      <div class="sub-panel" data-aos="fade-right">
+        <h3>Education</h3>
+        <div class="edu-item">
+          <div class="edu-deg">Bachelor of Engineering in ECE</div>
+          <div class="edu-inst">Easwari Engineering College, Chennai</div>
+          <div class="edu-meta">2024 – 2028 · Current CGPA: 7.6</div>
+        </div>
+      </div>
+
+      <div class="sub-panel" data-aos="fade-left">
+        <h3>Honors &amp; Recognition</h3>
+        <ul class="award-list">
+          <li class="award-item">
+            <span class="award-name">1st Prize — Project Presentation</span>
+            <span class="award-org">TechPulse 2026, Easwari Engg College</span>
+          </li>
+          <li class="award-item">
+            <span class="award-name">2nd Prize — EDA &amp; RTL Design</span>
+            <span class="award-org">Nexus Chipcraft 2026, RMKCET</span>
+          </li>
+          <li class="award-item">
+            <span class="award-name">3rd Prize — Embedded Systems &amp; Accel</span>
+            <span class="award-org">Vidyutrenz 2026, CIT</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="si">
+    <div class="slabel">Direct Pipeline</div>
+    <h2 class="stitle">Get in <span>Touch</span></h2>
+    <div class="contact-grid">
+      
+      <div class="contact-meta">
+        <p>
+          Open to Silicon Design, FPGA Acceleration, and Systems Firmware internships or research collaborations. Based in Chennai, India.
+        </p>
+        <div class="contact-links">
+          <a href="mailto:jeromeantomary2006@gmail.com" class="c-link">
+            <span>Email</span><span>jeromeantomary2006@gmail.com ↗</span>
+          </a>
+          <a href="tel:+919841343736" class="c-link">
+            <span>Phone</span><span>+91 9841343736 ↗</span>
+          </a>
+          <a href="https://github.com/JeromeAntonyRobin" target="_blank" rel="noopener" class="c-link">
+            <span>GitHub</span><span>github.com/JeromeAntonyRobin ↗</span>
+          </a>
+          <a href="https://www.linkedin.com/in/jerome17" target="_blank" rel="noopener" class="c-link">
+            <span>LinkedIn</span><span>linkedin.com/in/jerome17 ↗</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="contact-form">
+        <form action="mailto:jeromeantomary2006@gmail.com" method="post" enctype="text/plain">
+          <div class="fg">
+            <label>Name</label>
+            <input type="text" name="name" required placeholder="Engineering Lead / Recruiter">
+          </div>
+          <div class="fg">
+            <label>Email</label>
+            <input type="email" name="email" required placeholder="contact@company.com">
+          </div>
+          <div class="fg">
+            <label>Message</label>
+            <textarea name="message" rows="4" required placeholder="Discussing FPGA acceleration roles or research..."></textarea>
+          </div>
+          <button type="submit" class="btn bp" style="width: 100%; justify-content: center;">Send Message</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>© 2026 Jerome Antony Robin. All rights reserved.</div>
+  <div>Industrial Slate Edition · Built with Vanilla HTML5/CSS3 &amp; WebGL Canvas</div>
+</footer>
+
+<!-- RESUME MODAL -->
+<div id="resume-modal" onclick="closeResume(event)">
+  <div class="modal-box">
+    <div class="modal-bar">
+      <span class="modal-title">Jerome Antony Robin — Resume Preview</span>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <a href="https://docs.google.com/document/d/1d2kx3qqXO2QlXLxyhpc1ONt2ZozU4TOqetcYGegORNQ/export?format=docx" class="btn bo" style="padding: 4px 10px; font-size: 11px;">⬇ .DOCX</a>
+        <button class="modal-btn-close" onclick="closeResumeBtn()">✕ ESC</button>
+      </div>
+    </div>
+    <iframe id="resume-frame" class="modal-frame" src="" title="Jerome Resume Preview"></iframe>
+  </div>
+</div>
+
+<script>
+// ── SYSTOLIC BUS CANVAS ANIMATION (Orthogonal Hardware Trace Router) ──
+(function() {
+  const canvas = document.getElementById('systolic-canvas');
+  const ctx = canvas.getContext('2d');
+  let width, height;
+  const spacing = 48; // Grid distance matching systolic array abstraction
+  let packets = [];
+  const mouse = { x: -9999, y: -9999 };
+
+  function resize() {
+    width = canvas.width = canvas.parentElement.clientWidth || window.innerWidth;
+    height = canvas.height = canvas.parentElement.clientHeight || window.innerHeight;
+  }
+
+  class Packet {
+    constructor() {
+      this.reset();
+    }
+    reset() {
+      // Pick aligned coordinate on grid
+      this.x = Math.floor((Math.random() * width) / spacing) * spacing;
+      this.y = Math.floor((Math.random() * height) / spacing) * spacing;
+      this.axis = Math.random() > 0.5 ? 'x' : 'y';
+      this.dir = Math.random() > 0.5 ? 1 : -1;
+      this.speed = 1.2 + Math.random() * 1.5;
+      this.len = 16 + Math.random() * 24;
+      this.life = 0;
+      this.maxLife = 180 + Math.random() * 120;
+    }
+    update() {
+      this.life++;
+      if (this.axis === 'x') {
+        this.x += this.speed * this.dir;
+      } else {
+        this.y += this.speed * this.dir;
+      }
+
+      // Check grid switch probability
+      if (this.life % Math.floor(spacing / this.speed) === 0 && Math.random() > 0.6) {
+        this.axis = this.axis === 'x' ? 'y' : 'x';
+        this.dir = Math.random() > 0.5 ? 1 : -1;
+      }
+
+      if (this.life > this.maxLife || this.x < 0 || this.x > width || this.y < 0 || this.y > height) {
+        this.reset();
+      }
+    }
+    draw() {
+      ctx.beginPath();
+      const alpha = Math.sin((this.life / this.maxLife) * Math.PI) * 0.45;
+      ctx.strokeStyle = `rgba(180, 195, 215, ${alpha})`;
+      ctx.lineWidth = 1.6;
+
+      if (this.axis === 'x') {
+        ctx.moveTo(this.x - this.len * this.dir, this.y);
+        ctx.lineTo(this.x, this.y);
+      } else {
+        ctx.moveTo(this.x, this.y - this.len * this.dir);
+        ctx.lineTo(this.x, this.y);
+      }
+      ctx.stroke();
+
+      // Draw head node
+      ctx.fillStyle = `rgba(235, 240, 250, ${alpha * 1.5})`;
+      ctx.fillRect(this.x - 1.5, this.y - 1.5, 3, 3);
+    }
+  }
+
+  function init() {
+    resize();
+    packets = [];
+    const packetCount = Math.floor((width * height) / 18000);
+    for (let i = 0; i < packetCount; i++) {
+      packets.push(new Packet());
+    }
+  }
+
+  function render() {
+    ctx.clearRect(0, 0, width, height);
+
+    // 1. Draw static faint orthogonal bus lines
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.022)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < width; x += spacing) {
+      ctx.moveTo(x, 0); ctx.lineTo(x, height);
+    }
+    for (let y = 0; y < height; y += spacing) {
+      ctx.moveTo(0, y); ctx.lineTo(width, y);
+    }
+    ctx.stroke();
+
+    // 2. Draw static nodes at intersections
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+    for (let x = 0; x < width; x += spacing * 2) {
+      for (let y = 0; y < height; y += spacing * 2) {
+        ctx.fillRect(x - 1, y - 1, 2, 2);
+      }
+    }
+
+    // 3. Render clocked packets
+    packets.forEach(p => {
+      p.update();
+      p.draw();
+    });
+
+    requestAnimationFrame(render);
+  }
+
+  window.addEventListener('resize', init);
+  window.addEventListener('load', () => { init(); render(); });
+  if (document.readyState === 'complete') { init(); render(); }
+})();
+
+// ── TYPEWRITER TEXT ──
+new Typed('#typewriter', {
+  strings: [
+    'Systolic Array Design.',
+    'RTL & Silicon Verification.',
+    'Microchip PolarFire SoC.',
+    'RISC-V Coprocessor Extensions.',
+    'Bare-Metal AI Runtimes.'
+  ],
+  typeSpeed: 60,
+  backSpeed: 40,
+  backDelay: 1800,
+  loop: true
+});
+
+// ── TIMELINE ANIMATION (Intersection Observer) ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.tl-item').forEach(item => {
+  observer.observe(item);
+});
+
+// ── AOS INITIALIZATION ──
+AOS.init({ duration: 650, easing: 'ease-out-cubic', once: true, offset: 40 });
+
+// ── NAVBAR SCROLL LOGIC ──
+window.addEventListener('scroll', () => {
+  const sc = document.documentElement.scrollTop;
+  document.getElementById('navbar').classList.toggle('scrolled', sc > 30);
+  
+  let currentSection = '';
+  document.querySelectorAll('section[id]').forEach(sec => {
+    if (sc >= sec.offsetTop - 120) currentSection = sec.id;
+  });
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + currentSection);
+  });
+});
+
+// ── MOBILE MENU ──
+function toggleMenu() {
+  document.getElementById('drawer').classList.toggle('open');
+  document.getElementById('ham').classList.toggle('open');
+}
+function closeMenu() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('ham').classList.remove('open');
+}
+
+// ── RESUME MODAL HANDLER ──
+const DOC_URL = 'https://docs.google.com/document/d/1d2kx3qqXO2QlXLxyhpc1ONt2ZozU4TOqetcYGegORNQ/preview';
+
+function openResume() {
+  document.getElementById('resume-frame').src = DOC_URL;
+  document.getElementById('resume-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeResumeBtn() {
+  document.getElementById('resume-modal').classList.remove('open');
+  document.getElementById('resume-frame').src = '';
+  document.body.style.overflow = '';
+}
+function closeResume(e) {
+  if (e.target === document.getElementById('resume-modal')) closeResumeBtn();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeResumeBtn(); });
+</script>
+
+</body>
+</html>
