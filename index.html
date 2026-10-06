@@ -396,21 +396,55 @@ footer {
 .modal-btn-close:hover { color: #fff; border-color: var(--border-active); }
 .modal-frame { flex: 1; border: none; width: 100%; background: #1e1e1e; }
 
-/* ── RESPONSIVE TIMELINE & LAYOUT ── */
+/* ── MOBILE & ANDROID RESPONSIVE RULES ── */
 @media (max-width: 860px) {
-  nav { padding: 0 24px; }
-  section { padding: 70px 20px; }
+  nav { padding: 0 18px; }
+  section { padding: 60px 16px; overflow-x: hidden; }
+  .si { width: 100%; max-width: 100%; }
   .nav-links { display: none; }
   .ham { display: flex; }
-  .hero-inner { flex-direction: column; gap: 32px; }
-  .split-grid, .contact-grid { grid-template-columns: 1fr; gap: 24px; }
-  footer { flex-direction: column; gap: 12px; text-align: center; }
+  .hero-inner { flex-direction: column; gap: 24px; width: 100%; max-width: 100%; }
+  .split-grid, .contact-grid { grid-template-columns: 1fr; gap: 20px; }
+  .projects-grid { grid-template-columns: 1fr; }
+  footer { flex-direction: column; gap: 10px; text-align: center; padding: 24px 16px; }
+
+  /* Hero Mobile Fitting */
+  #home {
+    padding: calc(var(--nav-h) + 16px) 16px 40px;
+    min-height: 100svh;
+  }
+  .hname { font-size: clamp(32px, 8.5vw, 48px); word-break: break-word; }
+  .htitle { font-size: clamp(16px, 4.5vw, 20px); }
+  .hdesc { font-size: 13.5px; max-width: 100%; line-height: 1.65; }
+  .hbtns { width: 100%; gap: 10px; }
+  .hbtns .btn { flex: 1 1 auto; text-align: center; justify-content: center; }
+  .pipeline-strip {
+    max-width: 100%;
+    gap: 4px 6px;
+    font-size: 10px;
+    padding: 8px 10px;
+  }
+  .pipe-step { font-size: 10px; padding: 2px 4px; }
 
   /* Mobile Timeline adjustments */
-  .timeline::before { left: 24px; }
-  .tl-item { width: 100%; padding: 20px 0 20px 48px; }
-  .tl-item:nth-child(odd), .tl-item:nth-child(even) { text-align: left; left: 0; transform: translateX(20px); }
-  .tl-item:nth-child(odd)::before, .tl-item:nth-child(even)::before { left: 18px; right: auto; }
+  .timeline::before { left: 14px; }
+  .tl-item { width: 100%; padding: 14px 0 14px 34px; }
+  .tl-item:nth-child(odd), .tl-item:nth-child(even) { text-align: left; left: 0; transform: translateX(0); }
+  .tl-item:nth-child(odd)::before, .tl-item:nth-child(even)::before { left: 8px; right: auto; width: 12px; height: 12px; top: 22px; }
+  .tl-content { padding: 16px; }
+
+  /* Cards & Forms */
+  .scard, .pcard, .contact-form, .split-box { padding: 18px 16px; }
+  .c-link { font-size: 11.5px; padding: 10px 12px; word-break: break-all; }
+  .modal-box { width: 96%; height: 90vh; }
+}
+
+@media (max-width: 480px) {
+  section { padding: 50px 14px; }
+  .stitle { font-size: 26px; margin-bottom: 28px; }
+  .hbadge { font-size: 10px; padding: 4px 10px; }
+  .pcard-title { font-size: 15px; }
+  .award-item { flex-direction: column; gap: 2px; }
 }
 </style>
 </head>
@@ -918,6 +952,8 @@ footer {
     width = canvas.width = parent ? parent.clientWidth : window.innerWidth;
     height = canvas.height = parent ? parent.clientHeight : window.innerHeight;
     
+    const isMobile = window.innerWidth < 860;
+    const tileSpacing = isMobile ? 54 : 68; // Compact snug pitch on Android / mobile
     cols = Math.ceil(width / tileSpacing) + 1;
     rows = Math.ceil(height / tileSpacing) + 1;
     
@@ -1232,10 +1268,49 @@ footer {
     requestAnimationFrame(render);
   }
 
+  function onTouchMove(e) {
+    if (!e.touches || !e.touches[0]) return;
+    const touch = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
+    const nx = touch.clientX - rect.left;
+    const ny = touch.clientY - rect.top;
+    mouse.x = nx;
+    mouse.y = ny;
+    mouse.active = true;
+
+    const tileSpacing = window.innerWidth < 860 ? 54 : 68;
+    const c = Math.floor(mouse.x / tileSpacing);
+    const r = Math.floor(mouse.y / tileSpacing);
+    if (r >= 0 && r < rows && c >= 0 && c < cols && clbs[r] && clbs[r][c]) {
+      clbs[r][c].active = 1.0;
+      clbs[r][c].pulse = 1.0;
+    }
+  }
+
+  function onTouchStart(e) {
+    onTouchMove(e);
+    if (e.touches && e.touches[0]) {
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      const cx = touch.clientX - rect.left;
+      const cy = touch.clientY - rect.top;
+      nets.forEach(net => {
+        net.waypoints.forEach(wp => {
+          if (Math.hypot(wp.x - cx, wp.y - cy) < 140) {
+            net.active = 1.0;
+            signals.push(createSignal(net));
+          }
+        });
+      });
+    }
+  }
+
   window.addEventListener('resize', resize);
   window.addEventListener('mousemove', onMouseMove, { passive: true });
   window.addEventListener('mouseleave', onMouseLeave);
   window.addEventListener('click', onClick);
+  window.addEventListener('touchstart', onTouchStart, { passive: true });
+  window.addEventListener('touchmove', onTouchMove, { passive: true });
   window.addEventListener('scroll', onScroll, { passive: true });
 
   window.addEventListener('load', () => { resize(); requestAnimationFrame(render); });
