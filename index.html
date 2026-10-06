@@ -914,8 +914,8 @@ footer {
     <div class="modal-bar">
       <span class="modal-title">Jerome Antony Robin — Resume</span>
       <div style="display: flex; gap: 8px; align-items: center;">
-        <a href="resume.pdf" download="Jerome Antony Robin - Resume.pdf" class="btn bp" style="padding: 4px 10px; font-size: 11px;">📥 Download PDF</a>
-        <a href="resume.pdf" target="_blank" class="btn bo" style="padding: 4px 10px; font-size: 11px;">↗ Open in Tab</a>
+        <a href="Jerome%20Antony%20Robin%20-%20Resume.pdf" download="Jerome Antony Robin - Resume.pdf" class="btn bp" style="padding: 4px 10px; font-size: 11px;">📥 Download PDF</a>
+        <a href="resume.html" target="_blank" class="btn bo" style="padding: 4px 10px; font-size: 11px;">↗ Open Page</a>
         <button class="modal-btn-close" onclick="closeResumeBtn()">✕ ESC</button>
       </div>
     </div>
@@ -1374,7 +1374,7 @@ function closeMenu() {
 }
 
 // ── RESUME MODAL HANDLER ──
-const DOC_URL = 'resume.pdf';
+const DOC_URL = 'resume.html';
 
 function openResume() {
   document.getElementById('resume-frame').src = DOC_URL;
