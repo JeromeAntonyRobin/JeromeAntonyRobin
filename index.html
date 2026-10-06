@@ -844,20 +844,28 @@ footer {
       </div>
 
       <div class="contact-form">
-        <form action="mailto:jeromeantomary2006@gmail.com" method="post" enctype="text/plain">
+        <form id="contact-form" onsubmit="handleContactSubmit(event)">
           <div class="fg">
-            <label>Name</label>
-            <input type="text" name="name" required placeholder="Engineering Lead / Recruiter">
+            <label>Your Name</label>
+            <input type="text" id="contact-name" required placeholder="Engineering Lead / Recruiter">
           </div>
           <div class="fg">
-            <label>Email</label>
-            <input type="email" name="email" required placeholder="contact@company.com">
+            <label>Your Email</label>
+            <input type="email" id="contact-email" required placeholder="contact@company.com">
+          </div>
+          <div class="fg">
+            <label>Subject</label>
+            <input type="text" id="contact-subject" placeholder="FPGA / ASIC Acceleration Opportunity">
           </div>
           <div class="fg">
             <label>Message</label>
-            <textarea name="message" rows="4" required placeholder="Discussing FPGA acceleration roles or research..."></textarea>
+            <textarea id="contact-msg" rows="4" required placeholder="Discussing FPGA acceleration roles, silicon design, or research..."></textarea>
           </div>
-          <button type="submit" class="btn bp" style="width: 100%; justify-content: center;">Send Message</button>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button type="submit" class="btn bp" style="flex: 1; justify-content: center;">✉️ Open in Email App</button>
+            <button type="button" onclick="copyContactMessage()" class="btn bo" id="copy-btn">📋 Copy Message</button>
+          </div>
+          <div id="contact-status" style="display: none; margin-top: 10px; font-family: var(--fm); font-size: 11px; color: var(--accent-green-dim); text-align: center;"></div>
         </form>
       </div>
 
@@ -1312,6 +1320,43 @@ function closeResume(e) {
   if (e.target === document.getElementById('resume-modal')) closeResumeBtn();
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeResumeBtn(); });
+
+// ── CONTACT FORM HANDLER ──
+function handleContactSubmit(e) {
+  e.preventDefault();
+  const name = document.getElementById('contact-name').value.trim();
+  const email = document.getElementById('contact-email').value.trim();
+  const subject = document.getElementById('contact-subject').value.trim() || 'Inquiry regarding Silicon / FPGA Acceleration';
+  const message = document.getElementById('contact-msg').value.trim();
+  
+  const bodyText = `Hi Jerome,\n\n${message}\n\nFrom: ${name}\nEmail: ${email}`;
+  const mailtoUrl = `mailto:jeromeantomary2006@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
+  
+  window.location.href = mailtoUrl;
+
+  const status = document.getElementById('contact-status');
+  status.textContent = '✓ Opening email client with prefilled message...';
+  status.style.display = 'block';
+}
+
+function copyContactMessage() {
+  const name = document.getElementById('contact-name').value.trim();
+  const email = document.getElementById('contact-email').value.trim();
+  const message = document.getElementById('contact-msg').value.trim();
+  const textToCopy = `To: jeromeantomary2006@gmail.com\nFrom: ${name || 'N/A'} <${email || 'N/A'}>\n\nMessage:\n${message || '(No message content)'}`;
+
+  navigator.clipboard.writeText(textToCopy).then(() => {
+    const btn = document.getElementById('copy-btn');
+    const oldText = btn.innerHTML;
+    btn.innerHTML = '✓ Copied!';
+    setTimeout(() => { btn.innerHTML = oldText; }, 2200);
+  }).catch(() => {
+    // Fallback if clipboard API is restricted
+    const status = document.getElementById('contact-status');
+    status.textContent = 'Email: jeromeantomary2006@gmail.com';
+    status.style.display = 'block';
+  });
+}
 </script>
 
 </body>
