@@ -171,31 +171,17 @@ section { padding: 100px 40px; position: relative; }
   animation: pulse 2.5s infinite;
 }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-.hhi {
-  font-family: var(--fm);
-  font-size: 13px;
-  color: var(--accent-wire);
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
 .hname {
-  font-size: clamp(42px, 6vw, 76px);
-  font-weight: 800;
-  line-height: 1.05;
-  color: var(--silver-bright);
-  letter-spacing: -1.5px;
-  margin-bottom: 8px;
+  font-size: clamp(40px, 6vw, 68px); font-weight: 800; line-height: 1.05;
+  color: var(--silver-bright); letter-spacing: -1.5px; margin-bottom: 8px;
 }
-.hsub {
-  font-size: clamp(20px, 2.6vw, 30px);
-  font-weight: 500;
-  color: var(--silver-med);
-  letter-spacing: -0.5px;
-  margin-bottom: 16px;
+.htitle {
+  font-size: clamp(18px, 2.4vw, 26px); font-weight: 600; color: #94a3b8;
+  letter-spacing: -0.3px; margin-bottom: 14px; font-family: var(--fm);
 }
+.htitle span { color: var(--silver-bright); }
 .hinto {
-  font-size: 15px; color: var(--text-muted); min-height: 28px; font-family: var(--fm);
+  font-size: 15px; color: var(--text-muted); min-height: 26px; font-family: var(--fm);
   margin-bottom: 20px;
 }
 .hinto .tw { color: var(--silver-bright); font-weight: 600; }
@@ -463,9 +449,8 @@ footer {
   <div class="hero-inner">
     <div class="htxt">
       <div class="hbadge"><span class="dot"></span>Ready for Silicon / Systems Engineering</div>
-      <div class="hhi">// Electronics &amp; Communication Engineer</div>
       <h1 class="hname">Jerome Antony Robin</h1>
-      <div class="hsub">Hardware Acceleration &amp; Systems</div>
+      <h2 class="htitle">Hardware Acceleration &amp; Systems Architecture</h2>
       <div class="hinto">Focused on <span class="tw" id="typewriter"></span></div>
       <p class="hdesc">
         Electronics &amp; Communication Engineering student engineering custom <strong>systolic GEMM accelerators</strong>, bare-metal microcontroller runtimes, and Linux-integrated edge AI pipelines across Microchip PolarFire, Xilinx Zynq, and NVIDIA Jetson platforms.
@@ -902,34 +887,27 @@ footer {
 </div>
 
 <script>
-// ── INTERACTIVE SYSTOLIC WAVEFRONT GRID (Monochrome Industrial Slate & Zinc) ──
+// ── INTERACTIVE FPGA SILICON FABRIC (CLB Island, Switch Matrix & Net Routing) ──
 (function() {
   const canvas = document.getElementById('systolic-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   
   let width, height;
-  const cellSize = 54; // Grid spacing for Processing Elements (PEs)
+  const tileSpacing = 68; // Pitch between Configurable Logic Blocks (CLBs)
   let cols = 0, rows = 0;
   
-  // Matrix of Processing Elements
-  let peGrid = []; // [row][col] -> { x, y, state: 0..1, lastStim: 0, macPulse: 0 }
+  // Fabric Architecture Elements
+  let clbs = [];       // Array of Logic Tiles { r, c, x, y, active, pulse, lutState }
+  let nets = [];       // Interconnect signal routes with routed segments
+  let signals = [];    // Clocked data signals traversing nets
   
-  // Wavefront pulses (diagonal systolic GEMM steps)
-  let wavefronts = [];
-  
-  // Bus routing packets
-  let packets = [];
-  
-  // Interaction states
-  const mouse = { x: -9999, y: -9999, prevX: -9999, prevY: -9999, active: false, speed: 0 };
+  // Interaction tracking
+  const mouse = { x: -9999, y: -9999, active: false, speed: 0 };
   let scrollY = window.scrollY || 0;
   let scrollSpeed = 0;
   let lastScrollY = scrollY;
   let lastScrollTime = performance.now();
-  
-  // Global clock ticking
-  let clockTick = 0;
   let lastTime = performance.now();
 
   function resize() {
@@ -937,67 +915,90 @@ footer {
     width = canvas.width = parent ? parent.clientWidth : window.innerWidth;
     height = canvas.height = parent ? parent.clientHeight : window.innerHeight;
     
-    cols = Math.ceil(width / cellSize) + 1;
-    rows = Math.ceil(height / cellSize) + 1;
+    cols = Math.ceil(width / tileSpacing) + 1;
+    rows = Math.ceil(height / tileSpacing) + 1;
     
-    peGrid = [];
+    // 1. Build CLB Tiles (Island Style)
+    clbs = [];
     for (let r = 0; r < rows; r++) {
-      peGrid[r] = [];
+      clbs[r] = [];
       for (let c = 0; c < cols; c++) {
-        peGrid[r][c] = {
-          x: c * cellSize,
-          y: r * cellSize,
-          activation: 0, // 0 to 1 intensity
-          weight: (r * 7 + c * 13) % 17 / 17, // Deterministic pseudo-register state
-          macActivity: 0
+        clbs[r][c] = {
+          x: c * tileSpacing + tileSpacing / 2,
+          y: r * tileSpacing + tileSpacing / 2,
+          active: 0,
+          pulse: 0,
+          type: (r % 2 === 0 && c % 2 === 0) ? 'DSP' : ((r + c) % 3 === 0 ? 'BRAM' : 'CLB'),
+          lut: Math.random() > 0.4
         };
       }
     }
 
-    // Initialize orthogonal trace packets
-    packets = [];
-    const packetCount = Math.min(36, Math.max(16, Math.floor((width * height) / 32000)));
-    for (let i = 0; i < packetCount; i++) {
-      packets.push(createPacket());
+    // 2. Synthesize Routed Interconnect Nets (Manhattan 2-pin / multi-pin nets)
+    nets = [];
+    const netCount = Math.max(12, Math.floor((width * height) / 38000));
+    for (let i = 0; i < netCount; i++) {
+      createRandomNet();
+    }
+
+    // 3. Populate Active Signal Transits
+    signals = [];
+    for (let i = 0; i < 24; i++) {
+      if (nets.length > 0) {
+        const net = nets[i % nets.length];
+        signals.push(createSignal(net));
+      }
     }
   }
 
-  function createPacket() {
-    const isCol = Math.random() > 0.5;
-    const c = Math.floor(Math.random() * cols);
-    const r = Math.floor(Math.random() * rows);
+  function createRandomNet() {
+    const startC = Math.floor(Math.random() * (cols - 2)) + 1;
+    const startR = Math.floor(Math.random() * (rows - 2)) + 1;
+    const len = 2 + Math.floor(Math.random() * 4);
+    
+    // Generate Manhattan L-shaped or Z-shaped track route
+    const waypoints = [];
+    let curX = startC * tileSpacing + tileSpacing / 2;
+    let curY = startR * tileSpacing + tileSpacing / 2;
+    waypoints.push({ x: curX, y: curY });
+
+    let horiz = Math.random() > 0.5;
+    for (let step = 0; step < len; step++) {
+      const delta = (Math.random() > 0.5 ? 1 : -1) * (tileSpacing * (1 + Math.floor(Math.random() * 2)));
+      if (horiz) {
+        curX = Math.max(20, Math.min(width - 20, curX + delta));
+      } else {
+        curY = Math.max(20, Math.min(height - 20, curY + delta));
+      }
+      waypoints.push({ x: curX, y: curY });
+      horiz = !horiz;
+    }
+
+    const net = {
+      waypoints: waypoints,
+      active: 0.15 + Math.random() * 0.35,
+      channelOffset: (Math.random() - 0.5) * 14
+    };
+    nets.push(net);
+    return net;
+  }
+
+  function createSignal(net) {
     return {
-      c: c,
-      r: r,
-      x: c * cellSize,
-      y: r * cellSize,
-      axis: isCol ? 'y' : 'x', // Systolic flow: A-inputs down (y), B-inputs right (x)
-      dir: 1, // Systolic array data flow direction
-      speed: 1.0 + Math.random() * 1.6,
-      len: 12 + Math.random() * 18,
-      intensity: 0.15 + Math.random() * 0.4
+      net: net,
+      segmentIndex: 0,
+      t: 0, // 0..1 along current segment
+      speed: 0.012 + Math.random() * 0.018,
+      len: 18 + Math.random() * 22,
+      brightness: 0.5 + Math.random() * 0.5
     };
   }
 
-  // Trigger a diagonal systolic wavefront propagation starting from (startR, startC)
-  function triggerWavefront(startR, startC, intensity = 1.0) {
-    if (wavefronts.length > 24) wavefronts.shift();
-    wavefronts.push({
-      startR: startR,
-      startC: startC,
-      radius: 0,
-      maxRadius: Math.max(cols, rows) * 1.2,
-      intensity: intensity,
-      decay: 0.02 + Math.random() * 0.015
-    });
-  }
-
-  // Track mouse coordinates relative to canvas
+  // Mouse event tracking
   function onMouseMove(e) {
     const rect = canvas.getBoundingClientRect();
     const nx = e.clientX - rect.left;
     const ny = e.clientY - rect.top;
-    
     const dx = nx - mouse.x;
     const dy = ny - mouse.y;
     mouse.speed = Math.sqrt(dx * dx + dy * dy);
@@ -1005,18 +1006,12 @@ footer {
     mouse.y = ny;
     mouse.active = true;
 
-    // Stimulate hovered PE
-    const c = Math.floor(mouse.x / cellSize);
-    const r = Math.floor(mouse.y / cellSize);
-    if (r >= 0 && r < rows && c >= 0 && c < cols) {
-      if (peGrid[r] && peGrid[r][c]) {
-        peGrid[r][c].activation = Math.min(1.0, peGrid[r][c].activation + 0.6);
-        peGrid[r][c].macActivity = 1.0;
-      }
-      // High speed motion triggers propagating systolic wavefront
-      if (mouse.speed > 18 && Math.random() > 0.4) {
-        triggerWavefront(r, c, Math.min(1.0, mouse.speed / 40));
-      }
+    // Probe nearby CLBs & nets
+    const c = Math.floor(mouse.x / tileSpacing);
+    const r = Math.floor(mouse.y / tileSpacing);
+    if (r >= 0 && r < rows && c >= 0 && c < cols && clbs[r] && clbs[r][c]) {
+      clbs[r][c].active = 1.0;
+      clbs[r][c].pulse = 1.0;
     }
   }
 
@@ -1030,20 +1025,24 @@ footer {
     const rect = canvas.getBoundingClientRect();
     const cx = e.clientX - rect.left;
     const cy = e.clientY - rect.top;
-    const c = Math.floor(cx / cellSize);
-    const r = Math.floor(cy / cellSize);
-    if (r >= 0 && r < rows && c >= 0 && c < cols) {
-      triggerWavefront(r, c, 1.2);
-    }
+
+    // Burst clocked pulses along all nearby nets
+    nets.forEach(net => {
+      net.waypoints.forEach(wp => {
+        const d = Math.hypot(wp.x - cx, wp.y - cy);
+        if (d < 160) {
+          net.active = 1.0;
+          signals.push(createSignal(net));
+        }
+      });
+    });
   }
 
-  // Track scroll velocity for clock frequency scaling & tilt
   function onScroll() {
     const now = performance.now();
     const dt = Math.max(1, now - lastScrollTime);
     const currentScrollY = window.scrollY || 0;
-    const dy = Math.abs(currentScrollY - lastScrollY);
-    scrollSpeed = dy / dt; // pixels per ms
+    scrollSpeed = Math.abs(currentScrollY - lastScrollY) / dt;
     lastScrollY = currentScrollY;
     scrollY = currentScrollY;
     lastScrollTime = now;
@@ -1053,164 +1052,177 @@ footer {
     const dt = Math.min(32, time - lastTime);
     lastTime = time;
 
-    // Dampen scroll speed smoothly
     scrollSpeed *= 0.92;
-
-    // Clock frequency multiplier derived from scroll & mouse velocity
-    const clockMultiplier = 1.0 + Math.min(3.5, scrollSpeed * 2.2 + (mouse.active ? mouse.speed * 0.02 : 0));
-    clockTick += (dt * 0.001) * clockMultiplier;
-
-    // Pseudo-3D silicon perspective shift with scroll depth
-    const scrollFactor = Math.min(1, scrollY / (window.innerHeight * 0.8 || 600));
-    const fadeOpacity = Math.max(0.12, 1.0 - scrollFactor * 0.85);
+    const clockScale = 1.0 + Math.min(3.0, scrollSpeed * 2.5 + (mouse.active ? mouse.speed * 0.025 : 0));
+    
+    // Depth fade as user scrolls
+    const scrollFactor = Math.min(1, scrollY / (window.innerHeight * 0.85 || 650));
+    const globalAlpha = Math.max(0.18, 1.0 - scrollFactor * 0.78);
 
     ctx.clearRect(0, 0, width, height);
     ctx.save();
-    ctx.globalAlpha = fadeOpacity;
+    ctx.globalAlpha = globalAlpha;
 
-    // 1. Advance wavefronts
-    for (let i = wavefronts.length - 1; i >= 0; i--) {
-      const wf = wavefronts[i];
-      wf.radius += (dt * 0.035) * clockMultiplier;
-      wf.intensity -= wf.decay;
-
-      // Activate PEs touched by systolic diagonal wave: (c - startC) + (r - startR) == radius
-      const currentWaveDist = Math.floor(wf.radius);
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          const dist = (c - wf.startC) + (r - wf.startR);
-          if (dist === currentWaveDist || dist === currentWaveDist - 1) {
-            if (peGrid[r] && peGrid[r][c]) {
-              peGrid[r][c].activation = Math.min(1.0, peGrid[r][c].activation + wf.intensity * 0.45);
-              peGrid[r][c].macActivity = Math.min(1.0, peGrid[r][c].macActivity + wf.intensity * 0.6);
-            }
-          }
-        }
-      }
-
-      if (wf.intensity <= 0 || wf.radius > wf.maxRadius) {
-        wavefronts.splice(i, 1);
-      }
-    }
-
-    // 2. Draw dual-rail interconnect buses (crisp industrial slate grid)
+    // ── 1. DRAW ROUTING CHANNEL CHANNELS (Horizontal & Vertical Traces) ──
     ctx.beginPath();
     ctx.lineWidth = 1;
-    ctx.strokeStyle = 'rgba(100, 116, 139, 0.15)'; // Slate-500 clearly visible
-    for (let c = 0; c < cols; c++) {
-      const x = c * cellSize;
-      ctx.moveTo(x - 2, 0); ctx.lineTo(x - 2, height);
-      ctx.moveTo(x + 2, 0); ctx.lineTo(x + 2, height);
+    ctx.strokeStyle = 'rgba(71, 85, 105, 0.12)'; // Slate-600 subtle bus lines
+    for (let c = 0; c <= cols; c++) {
+      const x = c * tileSpacing;
+      // Channel dual lines
+      ctx.moveTo(x - 6, 0); ctx.lineTo(x - 6, height);
+      ctx.moveTo(x + 6, 0); ctx.lineTo(x + 6, height);
     }
-    for (let r = 0; r < rows; r++) {
-      const y = r * cellSize;
-      ctx.moveTo(0, y - 2); ctx.lineTo(width, y - 2);
-      ctx.moveTo(0, y + 2); ctx.lineTo(width, y + 2);
+    for (let r = 0; r <= rows; r++) {
+      const y = r * tileSpacing;
+      ctx.moveTo(0, y - 6); ctx.lineTo(width, y - 6);
+      ctx.moveTo(0, y + 6); ctx.lineTo(width, y + 6);
     }
     ctx.stroke();
 
-    // 3. Render Processing Element (PE) Cells
-    const peSize = cellSize - 16;
-    const halfPe = peSize / 2;
-
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        const pe = peGrid[r][c];
-        const cx = c * cellSize + cellSize / 2;
-        const cy = r * cellSize + cellSize / 2;
-
-        // Proximity stimulation from cursor
-        if (mouse.active) {
-          const mdx = cx - mouse.x;
-          const mdy = cy - mouse.y;
-          const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
-          if (mDist < 140) {
-            const proximity = (1 - mDist / 140);
-            pe.activation = Math.max(pe.activation, proximity * 0.95);
-            if (mDist < 45) pe.macActivity = Math.max(pe.macActivity, 0.85);
-          }
-        }
-
-        // Natural decay of activation & MAC state
-        pe.activation *= 0.93;
-        pe.macActivity *= 0.90;
-
-        // Base static PE border (crisp industrial zinc/slate)
-        const baseAlpha = 0.12 + pe.activation * 0.55;
-        const slateLum = Math.floor(160 + pe.activation * 85);
-
-        ctx.strokeStyle = `rgba(${slateLum}, ${slateLum + 4}, ${slateLum + 10}, ${baseAlpha})`;
-        ctx.lineWidth = pe.activation > 0.25 ? 1.5 : 1;
-        ctx.strokeRect(cx - halfPe, cy - halfPe, peSize, peSize);
-
-        // Core accumulator fill on MAC activity
-        if (pe.activation > 0.04 || pe.macActivity > 0.04) {
-          const fillAlpha = (pe.activation * 0.16) + (pe.macActivity * 0.25);
-          ctx.fillStyle = `rgba(226, 232, 240, ${fillAlpha})`; // Pure slate silver
-          ctx.fillRect(cx - halfPe + 1, cy - halfPe + 1, peSize - 2, peSize - 2);
-        }
-
-        // Inner hardware register dot / MAC status indicator
-        const dotAlpha = 0.22 + pe.activation * 0.75;
-        const dotGrey = Math.floor(190 + pe.activation * 65);
-        ctx.fillStyle = `rgba(${dotGrey}, ${dotGrey}, ${dotGrey}, ${dotAlpha})`;
-        ctx.fillRect(cx - 1.5, cy - 1.5, 3, 3);
+    // ── 2. DRAW SWITCH BOXES / CROSSBAR MATRICES AT INTERSECTIONS ──
+    ctx.fillStyle = 'rgba(100, 116, 139, 0.22)';
+    for (let c = 0; c <= cols; c++) {
+      for (let r = 0; r <= rows; r++) {
+        const x = c * tileSpacing;
+        const y = r * tileSpacing;
+        // Little 4-pin switch box square
+        ctx.fillRect(x - 3, y - 3, 6, 6);
       }
     }
 
-    // 4. Update and render systolic data packets
-    for (let i = 0; i < packets.length; i++) {
-      const p = packets[i];
-      p.speed = (1.2 + (i % 3) * 0.7) * clockMultiplier;
-      
-      if (p.axis === 'x') {
-        p.x += p.speed;
-        if (p.x > width + 40) {
-          p.x = -20;
-          p.r = Math.floor(Math.random() * rows);
-          p.y = p.r * cellSize + cellSize / 2;
-        }
-      } else {
-        p.y += p.speed;
-        if (p.y > height + 40) {
-          p.y = -20;
-          p.c = Math.floor(Math.random() * cols);
-          p.x = p.c * cellSize + cellSize / 2;
-        }
-      }
-
-      // Check if packet triggers a PE
-      const curC = Math.floor(p.x / cellSize);
-      const curR = Math.floor(p.y / cellSize);
-      if (curR >= 0 && curR < rows && curC >= 0 && curC < cols) {
-        if (peGrid[curR] && peGrid[curR][curC]) {
-          peGrid[curR][curC].activation = Math.max(peGrid[curR][curC].activation, 0.35);
-        }
-      }
-
-      // Draw packet pulse in monochrome slate
+    // ── 3. DRAW ROUTED NETS (Manhattan Segments) ──
+    nets.forEach(net => {
+      net.active *= 0.96;
+      const netAlpha = 0.08 + net.active * 0.45;
       ctx.beginPath();
-      const alpha = 0.45 + p.intensity * 0.45;
-      ctx.strokeStyle = `rgba(226, 232, 240, ${alpha})`; // Crisp slate-200
-      ctx.lineWidth = 1.8;
+      ctx.lineWidth = net.active > 0.2 ? 1.5 : 1;
+      ctx.strokeStyle = `rgba(148, 163, 184, ${netAlpha})`; // Slate-400
 
-      if (p.axis === 'x') {
-        ctx.moveTo(p.x - p.len, p.y);
-        ctx.lineTo(p.x, p.y);
-      } else {
-        ctx.moveTo(p.x, p.y - p.len);
-        ctx.lineTo(p.x, p.y);
+      const wps = net.waypoints;
+      if (wps.length > 0) {
+        ctx.moveTo(wps[0].x, wps[0].y);
+        for (let i = 1; i < wps.length; i++) {
+          ctx.lineTo(wps[i].x, wps[i].y);
+        }
       }
       ctx.stroke();
 
-      // Leading bit head
-      ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(1.0, alpha * 1.5)})`;
-      ctx.fillRect(p.x - 2, p.y - 2, 4, 4);
+      // Draw via / connection pins at turns
+      ctx.fillStyle = `rgba(203, 213, 225, ${netAlpha * 1.4})`;
+      wps.forEach(wp => {
+        ctx.fillRect(wp.x - 1.5, wp.y - 1.5, 3, 3);
+      });
+    });
+
+    // ── 4. DRAW CLB / DSP / BRAM TILES (FPGA Logic Blocks) ──
+    const clbSize = tileSpacing - 22; // ~46px square block
+    const halfClb = clbSize / 2;
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const tile = clbs[r][c];
+        
+        // Mouse hover probe excitation
+        if (mouse.active) {
+          const mDist = Math.hypot(tile.x - mouse.x, tile.y - mouse.y);
+          if (mDist < 120) {
+            const prox = 1 - mDist / 120;
+            tile.active = Math.max(tile.active, prox);
+            if (mDist < 40) tile.pulse = Math.max(tile.pulse, 0.9);
+          }
+        }
+
+        tile.active *= 0.93;
+        tile.pulse *= 0.90;
+
+        const tileAlpha = 0.09 + tile.active * 0.55;
+        const lum = Math.floor(130 + tile.active * 105);
+
+        // CLB outer chassis border
+        ctx.strokeStyle = `rgba(${lum}, ${lum + 4}, ${lum + 10}, ${tileAlpha})`;
+        ctx.lineWidth = tile.active > 0.2 ? 1.4 : 1;
+        ctx.strokeRect(tile.x - halfClb, tile.y - halfClb, clbSize, clbSize);
+
+        // Active LUT / Register core fill
+        if (tile.active > 0.05 || tile.pulse > 0.05) {
+          const fillLum = Math.floor(200 + tile.pulse * 55);
+          ctx.fillStyle = `rgba(${fillLum}, ${fillLum}, ${fillLum}, ${tile.active * 0.14 + tile.pulse * 0.2})`;
+          ctx.fillRect(tile.x - halfClb + 1, tile.y - halfClb + 1, clbSize - 2, clbSize - 2);
+        }
+
+        // Sub-elements: Slice LUTs & Flip-Flops (4 mini cells inside CLB)
+        const subSize = (clbSize - 9) / 2;
+        const subAlpha = 0.06 + tile.active * 0.45;
+        ctx.strokeStyle = `rgba(148, 163, 184, ${subAlpha})`;
+        ctx.lineWidth = 0.8;
+        
+        // 4 sub-slices (LUT/FF pairs)
+        ctx.strokeRect(tile.x - halfClb + 2, tile.y - halfClb + 2, subSize, subSize);
+        ctx.strokeRect(tile.x + 2, tile.y - halfClb + 2, subSize, subSize);
+        ctx.strokeRect(tile.x - halfClb + 2, tile.y + 2, subSize, subSize);
+        ctx.strokeRect(tile.x + 2, tile.y + 2, subSize, subSize);
+
+        // Tile Type identifier pin
+        if (tile.type === 'DSP') {
+          ctx.fillStyle = `rgba(163, 190, 140, ${0.15 + tile.active * 0.5})`; // Very subtle PolarFire green accent
+          ctx.fillRect(tile.x - 2, tile.y - 2, 4, 4);
+        } else {
+          ctx.fillStyle = `rgba(203, 213, 225, ${0.12 + tile.active * 0.6})`;
+          ctx.fillRect(tile.x - 1.5, tile.y - 1.5, 3, 3);
+        }
+      }
     }
 
-    // Spontaneous gentle background systolic pulse every ~2.5s
-    if (Math.random() < 0.009 && wavefronts.length < 2) {
-      triggerWavefront(0, 0, 0.65);
+    // ── 5. PROPAGATE DATA BUS SIGNALS (Clocked Pulses along Nets) ──
+    for (let i = 0; i < signals.length; i++) {
+      const sig = signals[i];
+      const net = sig.net;
+      const wps = net.waypoints;
+
+      if (!wps || wps.length < 2) continue;
+
+      sig.t += sig.speed * clockScale;
+
+      // Advance to next segment
+      if (sig.t >= 1) {
+        sig.t = 0;
+        sig.segmentIndex++;
+        if (sig.segmentIndex >= wps.length - 1) {
+          // Finished net: loop or reassign
+          sig.segmentIndex = 0;
+          sig.net = nets[Math.floor(Math.random() * nets.length)];
+          continue;
+        }
+      }
+
+      const p1 = wps[sig.segmentIndex];
+      const p2 = wps[sig.segmentIndex + 1];
+      if (!p1 || !p2) continue;
+
+      const curX = p1.x + (p2.x - p1.x) * sig.t;
+      const curY = p1.y + (p2.y - p1.y) * sig.t;
+
+      // Calculate tail coordinate
+      const segDx = p2.x - p1.x;
+      const segDy = p2.y - p1.y;
+      const segLen = Math.hypot(segDx, segDy) || 1;
+      const tailFraction = Math.min(sig.t, sig.len / segLen);
+      const tailX = curX - (segDx / segLen) * (tailFraction * segLen);
+      const tailY = curY - (segDy / segLen) * (tailFraction * segLen);
+
+      // Draw clocked pulse trail
+      const pulseAlpha = 0.4 + sig.brightness * 0.5;
+      ctx.beginPath();
+      ctx.lineWidth = 1.8;
+      ctx.strokeStyle = `rgba(226, 232, 240, ${pulseAlpha})`; // Slate-200 / Zinc bright
+      ctx.moveTo(tailX, tailY);
+      ctx.lineTo(curX, curY);
+      ctx.stroke();
+
+      // Leading clock edge dot
+      ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(1.0, pulseAlpha * 1.5)})`;
+      ctx.fillRect(curX - 2, curY - 2, 4, 4);
     }
 
     ctx.restore();
