@@ -882,118 +882,329 @@ footer {
 </div>
 
 <script>
-// ── SYSTOLIC BUS CANVAS ANIMATION (Orthogonal Hardware Trace Router) ──
+// ── INTERACTIVE SYSTOLIC WAVEFRONT GRID (Monochrome Industrial Slate & Zinc) ──
 (function() {
   const canvas = document.getElementById('systolic-canvas');
+  if (!canvas) return;
   const ctx = canvas.getContext('2d');
+  
   let width, height;
-  const spacing = 48; // Grid distance matching systolic array abstraction
+  const cellSize = 54; // Grid spacing for Processing Elements (PEs)
+  let cols = 0, rows = 0;
+  
+  // Matrix of Processing Elements
+  let peGrid = []; // [row][col] -> { x, y, state: 0..1, lastStim: 0, macPulse: 0 }
+  
+  // Wavefront pulses (diagonal systolic GEMM steps)
+  let wavefronts = [];
+  
+  // Bus routing packets
   let packets = [];
-  const mouse = { x: -9999, y: -9999 };
+  
+  // Interaction states
+  const mouse = { x: -9999, y: -9999, prevX: -9999, prevY: -9999, active: false, speed: 0 };
+  let scrollY = window.scrollY || 0;
+  let scrollSpeed = 0;
+  let lastScrollY = scrollY;
+  let lastScrollTime = performance.now();
+  
+  // Global clock ticking
+  let clockTick = 0;
+  let lastTime = performance.now();
 
   function resize() {
-    width = canvas.width = canvas.parentElement.clientWidth || window.innerWidth;
-    height = canvas.height = canvas.parentElement.clientHeight || window.innerHeight;
-  }
-
-  class Packet {
-    constructor() {
-      this.reset();
-    }
-    reset() {
-      // Pick aligned coordinate on grid
-      this.x = Math.floor((Math.random() * width) / spacing) * spacing;
-      this.y = Math.floor((Math.random() * height) / spacing) * spacing;
-      this.axis = Math.random() > 0.5 ? 'x' : 'y';
-      this.dir = Math.random() > 0.5 ? 1 : -1;
-      this.speed = 1.2 + Math.random() * 1.5;
-      this.len = 16 + Math.random() * 24;
-      this.life = 0;
-      this.maxLife = 180 + Math.random() * 120;
-    }
-    update() {
-      this.life++;
-      if (this.axis === 'x') {
-        this.x += this.speed * this.dir;
-      } else {
-        this.y += this.speed * this.dir;
-      }
-
-      // Check grid switch probability
-      if (this.life % Math.floor(spacing / this.speed) === 0 && Math.random() > 0.6) {
-        this.axis = this.axis === 'x' ? 'y' : 'x';
-        this.dir = Math.random() > 0.5 ? 1 : -1;
-      }
-
-      if (this.life > this.maxLife || this.x < 0 || this.x > width || this.y < 0 || this.y > height) {
-        this.reset();
+    const parent = canvas.parentElement;
+    width = canvas.width = parent ? parent.clientWidth : window.innerWidth;
+    height = canvas.height = parent ? parent.clientHeight : window.innerHeight;
+    
+    cols = Math.ceil(width / cellSize) + 1;
+    rows = Math.ceil(height / cellSize) + 1;
+    
+    peGrid = [];
+    for (let r = 0; r < rows; r++) {
+      peGrid[r] = [];
+      for (let c = 0; c < cols; c++) {
+        peGrid[r][c] = {
+          x: c * cellSize,
+          y: r * cellSize,
+          activation: 0, // 0 to 1 intensity
+          weight: (r * 7 + c * 13) % 17 / 17, // Deterministic pseudo-register state
+          macActivity: 0
+        };
       }
     }
-    draw() {
-      ctx.beginPath();
-      const alpha = Math.sin((this.life / this.maxLife) * Math.PI) * 0.45;
-      ctx.strokeStyle = `rgba(180, 195, 215, ${alpha})`;
-      ctx.lineWidth = 1.6;
 
-      if (this.axis === 'x') {
-        ctx.moveTo(this.x - this.len * this.dir, this.y);
-        ctx.lineTo(this.x, this.y);
-      } else {
-        ctx.moveTo(this.x, this.y - this.len * this.dir);
-        ctx.lineTo(this.x, this.y);
-      }
-      ctx.stroke();
-
-      // Draw head node
-      ctx.fillStyle = `rgba(235, 240, 250, ${alpha * 1.5})`;
-      ctx.fillRect(this.x - 1.5, this.y - 1.5, 3, 3);
-    }
-  }
-
-  function init() {
-    resize();
+    // Initialize orthogonal trace packets
     packets = [];
-    const packetCount = Math.floor((width * height) / 18000);
+    const packetCount = Math.min(36, Math.max(16, Math.floor((width * height) / 32000)));
     for (let i = 0; i < packetCount; i++) {
-      packets.push(new Packet());
+      packets.push(createPacket());
     }
   }
 
-  function render() {
-    ctx.clearRect(0, 0, width, height);
+  function createPacket() {
+    const isCol = Math.random() > 0.5;
+    const c = Math.floor(Math.random() * cols);
+    const r = Math.floor(Math.random() * rows);
+    return {
+      c: c,
+      r: r,
+      x: c * cellSize,
+      y: r * cellSize,
+      axis: isCol ? 'y' : 'x', // Systolic flow: A-inputs down (y), B-inputs right (x)
+      dir: 1, // Systolic array data flow direction
+      speed: 1.0 + Math.random() * 1.6,
+      len: 12 + Math.random() * 18,
+      intensity: 0.15 + Math.random() * 0.4
+    };
+  }
 
-    // 1. Draw static faint orthogonal bus lines
-    ctx.beginPath();
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.022)';
-    ctx.lineWidth = 1;
-    for (let x = 0; x < width; x += spacing) {
-      ctx.moveTo(x, 0); ctx.lineTo(x, height);
+  // Trigger a diagonal systolic wavefront propagation starting from (startR, startC)
+  function triggerWavefront(startR, startC, intensity = 1.0) {
+    if (wavefronts.length > 24) wavefronts.shift();
+    wavefronts.push({
+      startR: startR,
+      startC: startC,
+      radius: 0,
+      maxRadius: Math.max(cols, rows) * 1.2,
+      intensity: intensity,
+      decay: 0.02 + Math.random() * 0.015
+    });
+  }
+
+  // Track mouse coordinates relative to canvas
+  function onMouseMove(e) {
+    const rect = canvas.getBoundingClientRect();
+    const nx = e.clientX - rect.left;
+    const ny = e.clientY - rect.top;
+    
+    const dx = nx - mouse.x;
+    const dy = ny - mouse.y;
+    mouse.speed = Math.sqrt(dx * dx + dy * dy);
+    mouse.x = nx;
+    mouse.y = ny;
+    mouse.active = true;
+
+    // Stimulate hovered PE
+    const c = Math.floor(mouse.x / cellSize);
+    const r = Math.floor(mouse.y / cellSize);
+    if (r >= 0 && r < rows && c >= 0 && c < cols) {
+      if (peGrid[r] && peGrid[r][c]) {
+        peGrid[r][c].activation = Math.min(1.0, peGrid[r][c].activation + 0.6);
+        peGrid[r][c].macActivity = 1.0;
+      }
+      // High speed motion triggers propagating systolic wavefront
+      if (mouse.speed > 18 && Math.random() > 0.4) {
+        triggerWavefront(r, c, Math.min(1.0, mouse.speed / 40));
+      }
     }
-    for (let y = 0; y < height; y += spacing) {
-      ctx.moveTo(0, y); ctx.lineTo(width, y);
+  }
+
+  function onMouseLeave() {
+    mouse.active = false;
+    mouse.x = -9999;
+    mouse.y = -9999;
+  }
+
+  function onClick(e) {
+    const rect = canvas.getBoundingClientRect();
+    const cx = e.clientX - rect.left;
+    const cy = e.clientY - rect.top;
+    const c = Math.floor(cx / cellSize);
+    const r = Math.floor(cy / cellSize);
+    if (r >= 0 && r < rows && c >= 0 && c < cols) {
+      triggerWavefront(r, c, 1.2);
+    }
+  }
+
+  // Track scroll velocity for clock frequency scaling & tilt
+  function onScroll() {
+    const now = performance.now();
+    const dt = Math.max(1, now - lastScrollTime);
+    const currentScrollY = window.scrollY || 0;
+    const dy = Math.abs(currentScrollY - lastScrollY);
+    scrollSpeed = dy / dt; // pixels per ms
+    lastScrollY = currentScrollY;
+    scrollY = currentScrollY;
+    lastScrollTime = now;
+  }
+
+  function render(time) {
+    const dt = Math.min(32, time - lastTime);
+    lastTime = time;
+
+    // Dampen scroll speed smoothly
+    scrollSpeed *= 0.92;
+
+    // Clock frequency multiplier derived from scroll & mouse velocity
+    const clockMultiplier = 1.0 + Math.min(3.5, scrollSpeed * 2.2 + (mouse.active ? mouse.speed * 0.02 : 0));
+    clockTick += (dt * 0.001) * clockMultiplier;
+
+    // Pseudo-3D silicon perspective shift with scroll depth
+    const scrollFactor = Math.min(1, scrollY / (window.innerHeight * 0.8 || 600));
+    const fadeOpacity = Math.max(0.12, 1.0 - scrollFactor * 0.85);
+
+    ctx.clearRect(0, 0, width, height);
+    ctx.save();
+    ctx.globalAlpha = fadeOpacity;
+
+    // 1. Advance wavefronts
+    for (let i = wavefronts.length - 1; i >= 0; i--) {
+      const wf = wavefronts[i];
+      wf.radius += (dt * 0.035) * clockMultiplier;
+      wf.intensity -= wf.decay;
+
+      // Activate PEs touched by systolic diagonal wave: (c - startC) + (r - startR) == radius
+      const currentWaveDist = Math.floor(wf.radius);
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const dist = (c - wf.startC) + (r - wf.startR);
+          if (dist === currentWaveDist || dist === currentWaveDist - 1) {
+            if (peGrid[r] && peGrid[r][c]) {
+              peGrid[r][c].activation = Math.min(1.0, peGrid[r][c].activation + wf.intensity * 0.45);
+              peGrid[r][c].macActivity = Math.min(1.0, peGrid[r][c].macActivity + wf.intensity * 0.6);
+            }
+          }
+        }
+      }
+
+      if (wf.intensity <= 0 || wf.radius > wf.maxRadius) {
+        wavefronts.splice(i, 1);
+      }
+    }
+
+    // 2. Draw dual-rail interconnect buses (subtle industrial grey/slate)
+    ctx.beginPath();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(75, 85, 99, 0.07)'; // Slate-500 dim
+    for (let c = 0; c < cols; c++) {
+      const x = c * cellSize;
+      ctx.moveTo(x - 2, 0); ctx.lineTo(x - 2, height);
+      ctx.moveTo(x + 2, 0); ctx.lineTo(x + 2, height);
+    }
+    for (let r = 0; r < rows; r++) {
+      const y = r * cellSize;
+      ctx.moveTo(0, y - 2); ctx.lineTo(width, y - 2);
+      ctx.moveTo(0, y + 2); ctx.lineTo(width, y + 2);
     }
     ctx.stroke();
 
-    // 2. Draw static nodes at intersections
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
-    for (let x = 0; x < width; x += spacing * 2) {
-      for (let y = 0; y < height; y += spacing * 2) {
-        ctx.fillRect(x - 1, y - 1, 2, 2);
+    // 3. Render Processing Element (PE) Cells
+    const peSize = cellSize - 14; // Small square footprint inside cell
+    const halfPe = peSize / 2;
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const pe = peGrid[r][c];
+        const cx = c * cellSize + cellSize / 2;
+        const cy = r * cellSize + cellSize / 2;
+
+        // Proximity stimulation from cursor
+        if (mouse.active) {
+          const mdx = cx - mouse.x;
+          const mdy = cy - mouse.y;
+          const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
+          if (mDist < 120) {
+            const proximity = (1 - mDist / 120);
+            pe.activation = Math.max(pe.activation, proximity * 0.85);
+            if (mDist < 40) pe.macActivity = Math.max(pe.macActivity, 0.7);
+          }
+        }
+
+        // Natural decay of activation & MAC state
+        pe.activation *= 0.94;
+        pe.macActivity *= 0.91;
+
+        // Base static PE border (dim zinc / graphite)
+        const baseAlpha = 0.04 + pe.activation * 0.35;
+        const slateLum = Math.floor(140 + pe.activation * 85); // 140..225 slate grey to silver
+
+        ctx.strokeStyle = `rgba(${slateLum}, ${slateLum + 5}, ${slateLum + 12}, ${baseAlpha})`;
+        ctx.lineWidth = pe.activation > 0.3 ? 1.4 : 1;
+        ctx.strokeRect(cx - halfPe, cy - halfPe, peSize, peSize);
+
+        // Core accumulator fill on MAC activity
+        if (pe.activation > 0.05 || pe.macActivity > 0.05) {
+          const fillAlpha = (pe.activation * 0.09) + (pe.macActivity * 0.14);
+          ctx.fillStyle = `rgba(216, 222, 233, ${fillAlpha})`; // Pure clean silver
+          ctx.fillRect(cx - halfPe + 1, cy - halfPe + 1, peSize - 2, peSize - 2);
+        }
+
+        // Inner hardware register dot / MAC status indicator
+        const dotAlpha = 0.08 + pe.activation * 0.65;
+        const dotGrey = Math.floor(180 + pe.activation * 65);
+        ctx.fillStyle = `rgba(${dotGrey}, ${dotGrey}, ${dotGrey}, ${dotAlpha})`;
+        ctx.fillRect(cx - 1, cy - 1, 2, 2);
       }
     }
 
-    // 3. Render clocked packets
-    packets.forEach(p => {
-      p.update();
-      p.draw();
-    });
+    // 4. Update and render systolic data packets
+    for (let i = 0; i < packets.length; i++) {
+      const p = packets[i];
+      p.speed = (1.1 + (i % 3) * 0.6) * clockMultiplier;
+      
+      if (p.axis === 'x') {
+        p.x += p.speed;
+        if (p.x > width + 40) {
+          p.x = -20;
+          p.r = Math.floor(Math.random() * rows);
+          p.y = p.r * cellSize + cellSize / 2;
+        }
+      } else {
+        p.y += p.speed;
+        if (p.y > height + 40) {
+          p.y = -20;
+          p.c = Math.floor(Math.random() * cols);
+          p.x = p.c * cellSize + cellSize / 2;
+        }
+      }
 
+      // Check if packet triggers a PE
+      const curC = Math.floor(p.x / cellSize);
+      const curR = Math.floor(p.y / cellSize);
+      if (curR >= 0 && curR < rows && curC >= 0 && curC < cols) {
+        if (peGrid[curR] && peGrid[curR][curC]) {
+          peGrid[curR][curC].activation = Math.max(peGrid[curR][curC].activation, 0.22);
+        }
+      }
+
+      // Draw packet pulse in monochrome slate
+      ctx.beginPath();
+      const alpha = p.intensity * (0.35 + Math.min(0.4, scrollSpeed * 0.3));
+      ctx.strokeStyle = `rgba(203, 213, 225, ${alpha})`; // Slate-300
+      ctx.lineWidth = 1.4;
+
+      if (p.axis === 'x') {
+        ctx.moveTo(p.x - p.len, p.y);
+        ctx.lineTo(p.x, p.y);
+      } else {
+        ctx.moveTo(p.x, p.y - p.len);
+        ctx.lineTo(p.x, p.y);
+      }
+      ctx.stroke();
+
+      // Leading bit head
+      ctx.fillStyle = `rgba(241, 245, 249, ${alpha * 1.6})`;
+      ctx.fillRect(p.x - 1.5, p.y - 1.5, 3, 3);
+    }
+
+    // Spontaneous gentle background systolic pulse every ~3.5s
+    if (Math.random() < 0.006 && wavefronts.length < 2) {
+      triggerWavefront(0, 0, 0.45);
+    }
+
+    ctx.restore();
     requestAnimationFrame(render);
   }
 
-  window.addEventListener('resize', init);
-  window.addEventListener('load', () => { init(); render(); });
-  if (document.readyState === 'complete') { init(); render(); }
+  window.addEventListener('resize', resize);
+  window.addEventListener('mousemove', onMouseMove);
+  window.addEventListener('mouseleave', onMouseLeave);
+  window.addEventListener('click', onClick);
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  window.addEventListener('load', () => { resize(); requestAnimationFrame(render); });
+  if (document.readyState === 'complete') { resize(); requestAnimationFrame(render); }
 })();
 
 // ── TYPEWRITER TEXT ──
