@@ -20,38 +20,99 @@
 <meta name="twitter:title" content="Jerome Antony Robin | Open Source Silicon &amp; Digital Design Researcher">
 <meta name="twitter:description" content="Open Source Silicon &amp; Digital Design Researcher engineering hardware accelerators, open RTL-to-GDSII tooling, and low-level Linux runtime systems.">
 
-<!-- Structured Semantic Data (JSON-LD Schema.org Person) -->
+<!-- Structured Semantic Data (JSON-LD Schema.org Person & Software Graph) -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "Jerome Antony Robin",
-  "jobTitle": "Open Source Silicon & Digital Design Researcher",
-  "url": "https://jeromeantonyrobin.github.io/JeromeAntonyRobin/",
-  "sameAs": [
-    "https://github.com/JeromeAntonyRobin",
-    "https://www.linkedin.com/in/jerome17",
-    "https://github.com/The-Silis-Foundation/silis",
-    "https://github.com/The-Silis-Foundation/GEMMrv32",
-    "https://github.com/JeromeAntonyRobin/PulseGEMM",
-    "https://github.com/JeromeAntonyRobin/DOOM-on-GEMMrv32",
-    "https://github.com/JeromeAntonyRobin/mlkit-barcode-linux",
-    "https://github.com/JeromeAntonyRobin/tinyml-rt-pico",
-    "https://github.com/The-Silis-Foundation/GEMMrvStudio",
-    "https://github.com/JeromeAntonyRobin/Binarized-YOLO-on-PYNQ",
-    "https://github.com/JeromeAntonyRobin/cbuf",
-    "https://jeromeantonyrobin.github.io/JeromeAntonyRobin/resume.html",
-    "https://rocketreach.co/the-silis-foundation-management_b6489081cbcde890"
-  ],
-  "knowsAbout": [
-    "FPGA (Xilinx, PolarFire, Gowin, Lattice)",
-    "ASIC",
-    "RTL to GDSII",
-    "Hardware Acceleration",
-    "Linux Drivers",
-    "Embedded Linux",
-    "Baremetal Systems",
-    "RISC-V Architecture"
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://jeromeantonyrobin.github.io/JeromeAntonyRobin/#person",
+      "name": "Jerome Antony Robin",
+      "givenName": "Jerome Antony",
+      "familyName": "Robin",
+      "jobTitle": "Open Source Silicon & Digital Design Researcher",
+      "description": "Open Source Silicon and Digital Design Researcher specializing in custom FPGA hardware accelerators, RISC-V coprocessors, RTL-to-GDSII ASIC design infrastructure, and bare-metal systems.",
+      "disambiguatingDescription": "Open-source digital hardware designer and creator of Silis IDE, GEMMrv32, and PulseGEMM; distinct from choreographer Jerome Robbins or television host Jérôme Anthony.",
+      "url": "https://jeromeantonyrobin.github.io/JeromeAntonyRobin/",
+      "sameAs": [
+        "https://github.com/JeromeAntonyRobin",
+        "https://www.linkedin.com/in/jerome17",
+        "https://github.com/The-Silis-Foundation/silis",
+        "https://github.com/The-Silis-Foundation/GEMMrv32",
+        "https://github.com/JeromeAntonyRobin/PulseGEMM",
+        "https://github.com/JeromeAntonyRobin/DOOM-on-GEMMrv32",
+        "https://github.com/JeromeAntonyRobin/mlkit-barcode-linux",
+        "https://github.com/JeromeAntonyRobin/tinyml-rt-pico",
+        "https://github.com/The-Silis-Foundation/GEMMrvStudio",
+        "https://github.com/JeromeAntonyRobin/Binarized-YOLO-on-PYNQ",
+        "https://github.com/JeromeAntonyRobin/cbuf",
+        "https://jeromeantonyrobin.github.io/JeromeAntonyRobin/resume.html",
+        "https://rocketreach.co/the-silis-foundation-management_b6489081cbcde890"
+      ],
+      "knowsAbout": [
+        "FPGA (Xilinx, PolarFire, Gowin, Lattice)",
+        "ASIC Design",
+        "RTL to GDSII",
+        "Hardware Acceleration",
+        "GEMMrv32 RISC-V Coprocessor",
+        "PulseGEMM Matrix Multiplier",
+        "Silis ASIC IDE",
+        "DOOM on GEMMrv32",
+        "Linux Drivers",
+        "Embedded Linux",
+        "Baremetal Systems",
+        "RISC-V Architecture"
+      ]
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://github.com/The-Silis-Foundation/silis",
+      "name": "Silis",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Linux",
+      "description": "Modular open-source RTL-to-GDSII ASIC design IDE integrating Yosys, OpenROAD, OpenSTA, and Magic VLSI.",
+      "author": {
+        "@id": "https://jeromeantonyrobin.github.io/JeromeAntonyRobin/#person"
+      },
+      "url": "https://github.com/The-Silis-Foundation/silis"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://github.com/The-Silis-Foundation/GEMMrv32",
+      "name": "GEMMrv32",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Hardware / Bare-metal",
+      "description": "Spatial 8x8 systolic-array matrix multiplier integrated directly into the NEORV32 RISC-V processor CFS with ping-pong tiling registers.",
+      "author": {
+        "@id": "https://jeromeantonyrobin.github.io/JeromeAntonyRobin/#person"
+      },
+      "url": "https://github.com/The-Silis-Foundation/GEMMrv32"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://github.com/JeromeAntonyRobin/PulseGEMM",
+      "name": "PulseGEMM",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Linux / Microchip PolarFire FPGA",
+      "description": "Systolic tensor GEMM engine on Microchip PolarFire FPGA with AXI4 DMA and userspace UIO Linux driver.",
+      "author": {
+        "@id": "https://jeromeantonyrobin.github.io/JeromeAntonyRobin/#person"
+      },
+      "url": "https://github.com/JeromeAntonyRobin/PulseGEMM"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://github.com/JeromeAntonyRobin/DOOM-on-GEMMrv32",
+      "name": "DOOM-on-GEMMrv32",
+      "applicationCategory": "GameApplication",
+      "operatingSystem": "Bare-metal RISC-V",
+      "description": "Bare-metal port of the DOOM engine running on the GEMMrv32 custom RISC-V processor architecture.",
+      "author": {
+        "@id": "https://jeromeantonyrobin.github.io/JeromeAntonyRobin/#person"
+      },
+      "url": "https://github.com/JeromeAntonyRobin/DOOM-on-GEMMrv32"
+    }
   ]
 }
 </script>
