@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jeromeantonyrobin.github.io/JeromeAntonyRobin/sitemap.xml
