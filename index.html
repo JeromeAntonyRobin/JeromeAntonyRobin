@@ -32,37 +32,41 @@
       "givenName": "Jerome Antony",
       "familyName": "Robin",
       "jobTitle": "Open Source Silicon & Digital Design Researcher",
-      "description": "Open Source Silicon and Digital Design Researcher specializing in custom FPGA hardware accelerators, RISC-V coprocessors, RTL-to-GDSII ASIC design infrastructure, and bare-metal systems.",
-      "disambiguatingDescription": "Open-source digital hardware designer and creator of Silis IDE, GEMMrv32, and PulseGEMM; distinct from choreographer Jerome Robbins or television host Jérôme Anthony.",
+      "worksFor": {
+        "@type": "Organization",
+        "name": "The Silis Foundation",
+        "url": "https://github.com/The-Silis-Foundation"
+      },
+      "description": "Open Source Silicon and Digital Design Researcher. Lead architect at The Silis Foundation, building Silis (RTL-to-GDSII ASIC design IDE), GEMMrv32 RISC-V coprocessors, and FPGA hardware accelerators.",
       "url": "https://jeromeantonyrobin.github.io/JeromeAntonyRobin/",
       "sameAs": [
-        "https://github.com/JeromeAntonyRobin",
-        "https://www.linkedin.com/in/jerome17",
         "https://github.com/The-Silis-Foundation/silis",
         "https://github.com/The-Silis-Foundation/GEMMrv32",
         "https://github.com/JeromeAntonyRobin/PulseGEMM",
         "https://github.com/JeromeAntonyRobin/DOOM-on-GEMMrv32",
-        "https://github.com/JeromeAntonyRobin/mlkit-barcode-linux",
-        "https://github.com/JeromeAntonyRobin/tinyml-rt-pico",
         "https://github.com/The-Silis-Foundation/GEMMrvStudio",
+        "https://github.com/The-Silis-Foundation",
+        "https://github.com/JeromeAntonyRobin",
+        "https://www.linkedin.com/in/jerome17",
+        "https://github.com/JeromeAntonyRobin/tinyml-rt-pico",
+        "https://github.com/JeromeAntonyRobin/mlkit-barcode-linux",
         "https://github.com/JeromeAntonyRobin/Binarized-YOLO-on-PYNQ",
         "https://github.com/JeromeAntonyRobin/cbuf",
         "https://jeromeantonyrobin.github.io/JeromeAntonyRobin/resume.html",
         "https://rocketreach.co/the-silis-foundation-management_b6489081cbcde890"
       ],
       "knowsAbout": [
-        "FPGA (Xilinx, PolarFire, Gowin, Lattice)",
-        "ASIC Design",
-        "RTL to GDSII",
-        "Hardware Acceleration",
+        "Silis ASIC IDE",
         "GEMMrv32 RISC-V Coprocessor",
         "PulseGEMM Matrix Multiplier",
-        "Silis ASIC IDE",
         "DOOM on GEMMrv32",
+        "RTL to GDSII",
+        "ASIC Design",
+        "FPGA (Xilinx, PolarFire, Gowin, Lattice)",
+        "Hardware Acceleration",
+        "RISC-V Architecture",
         "Linux Drivers",
-        "Embedded Linux",
-        "Baremetal Systems",
-        "RISC-V Architecture"
+        "Baremetal Systems"
       ]
     },
     {
@@ -783,22 +787,22 @@ footer {
       <div class="pcard" data-aos="fade-up">
         <div class="pcard-top">
           <div class="pcard-title-row">
-            <span class="pcard-title">PulseGEMM (PolarFire SoC)</span>
-            <a href="https://github.com/JeromeAntonyRobin/PulseGEMM" target="_blank" rel="noopener" class="pcard-link">GitHub ↗</a>
+            <span class="pcard-title">Silis: RTL-to-GDSII IDE</span>
+            <a href="https://github.com/The-Silis-Foundation/silis" target="_blank" rel="noopener" class="pcard-link">GitHub ↗</a>
           </div>
           <p class="pcard-desc">
-            Layer-wise 16x16 INT8 systolic compute engine optimized for the Microchip PolarFire SoC. Integrated with a 64-bit AXI4 master DMA engine with ping-pong SRAM buffering for zero-copy 2D strided activation extraction.
+            Modular ASIC design environment integrating Yosys, OpenROAD, OpenSTA, and Magic VLSI. Features native C++ DEF parsing engines bound via pybind11 to render chip layouts at 60 FPS.
           </p>
         </div>
         <div>
           <div class="pcard-metric">
-            256 MACs/cyc @ 100 MHz · 256 DSPs (87.7%) · 51.58x ResNet-50 speedup
+            Automated RTL→GDSII Flow · Zero-Friction Open-Source Tapeout
           </div>
           <div class="pcard-tags">
-            <span class="stag">Verilog</span>
-            <span class="stag">PolarFire</span>
-            <span class="stag">AXI4-DMA</span>
-            <span class="stag">/dev/mem</span>
+            <span class="stag">C++17/20</span>
+            <span class="stag">PyQt6</span>
+            <span class="stag">OpenROAD</span>
+            <span class="stag">Yosys</span>
           </div>
         </div>
       </div>
@@ -829,6 +833,29 @@ footer {
       <div class="pcard" data-aos="fade-up" data-aos-delay="90">
         <div class="pcard-top">
           <div class="pcard-title-row">
+            <span class="pcard-title">PulseGEMM (PolarFire SoC)</span>
+            <a href="https://github.com/JeromeAntonyRobin/PulseGEMM" target="_blank" rel="noopener" class="pcard-link">GitHub ↗</a>
+          </div>
+          <p class="pcard-desc">
+            Layer-wise 16x16 INT8 systolic compute engine optimized for the Microchip PolarFire SoC. Integrated with a 64-bit AXI4 master DMA engine with ping-pong SRAM buffering for zero-copy 2D strided activation extraction.
+          </p>
+        </div>
+        <div>
+          <div class="pcard-metric">
+            256 MACs/cyc @ 100 MHz · 256 DSPs (87.7%) · 51.58x ResNet-50 speedup
+          </div>
+          <div class="pcard-tags">
+            <span class="stag">Verilog</span>
+            <span class="stag">PolarFire</span>
+            <span class="stag">AXI4-DMA</span>
+            <span class="stag">/dev/mem</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pcard" data-aos="fade-up" data-aos-delay="120">
+        <div class="pcard-top">
+          <div class="pcard-title-row">
             <span class="pcard-title">DOOM on GEMMrv32</span>
             <a href="https://github.com/JeromeAntonyRobin/DOOM-on-GEMMrv32" target="_blank" rel="noopener" class="pcard-link">GitHub ↗</a>
           </div>
@@ -849,7 +876,7 @@ footer {
         </div>
       </div>
 
-      <div class="pcard" data-aos="fade-up" data-aos-delay="120">
+      <div class="pcard" data-aos="fade-up" data-aos-delay="150">
         <div class="pcard-top">
           <div class="pcard-title-row">
             <span class="pcard-title">GEMMrvStudio</span>
@@ -868,29 +895,6 @@ footer {
             <span class="stag">GUI</span>
             <span class="stag">RISC-V</span>
             <span class="stag">Simulation</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="pcard" data-aos="fade-up" data-aos-delay="120">
-        <div class="pcard-top">
-          <div class="pcard-title-row">
-            <span class="pcard-title">Silis: RTL-to-GDSII IDE</span>
-            <a href="https://github.com/The-Silis-Foundation/silis" target="_blank" rel="noopener" class="pcard-link">GitHub ↗</a>
-          </div>
-          <p class="pcard-desc">
-            Modular ASIC design environment integrating Yosys, OpenROAD, OpenSTA, and Magic VLSI. Features native C++ DEF parsing engines bound via pybind11 to render chip layouts at 60 FPS.
-          </p>
-        </div>
-        <div>
-          <div class="pcard-metric">
-            Automated RTL→GDSII Flow · Zero-Friction Open-Source Tapeout
-          </div>
-          <div class="pcard-tags">
-            <span class="stag">C++17/20</span>
-            <span class="stag">PyQt6</span>
-            <span class="stag">OpenROAD</span>
-            <span class="stag">Yosys</span>
           </div>
         </div>
       </div>
