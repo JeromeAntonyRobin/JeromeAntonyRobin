@@ -78,7 +78,9 @@
       "name": "Silis",
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "Linux",
-      "description": "Modular open-source RTL-to-GDSII ASIC design IDE integrating Yosys, OpenROAD, OpenSTA, and Magic VLSI.",
+      "softwareVersion": "v0.1.1-pre",
+      "downloadUrl": "https://github.com/The-Silis-Foundation/silis/releases",
+      "description": "Modular open-source RTL-to-GDSII ASIC design IDE integrating Yosys, OpenROAD, OpenSTA, and Magic VLSI. Packaged as a standalone x86_64 AppImage for deterministic tapeout flows.",
       "author": {
         "@id": "https://jeromeantonyrobin.github.io/JeromeAntonyRobin/#person"
       },
@@ -828,16 +830,20 @@ footer {
         <div class="pcard-top">
           <div class="pcard-title-row">
             <span class="pcard-title">Silis: RTL-to-GDSII IDE</span>
-            <a href="https://github.com/The-Silis-Foundation/silis" target="_blank" rel="noopener" class="pcard-link">GitHub ↗</a>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <a href="https://github.com/The-Silis-Foundation/silis/releases" target="_blank" rel="noopener" class="pcard-link" style="color:var(--accent-wire);border-color:var(--accent-wire);background:rgba(218,119,86,0.08);">Release v0.1.1 ↗</a>
+              <a href="https://github.com/The-Silis-Foundation/silis" target="_blank" rel="noopener" class="pcard-link">GitHub ↗</a>
+            </div>
           </div>
           <p class="pcard-desc">
-            Modular ASIC design environment integrating Yosys, OpenROAD, OpenSTA, and Magic VLSI. Features native C++ DEF parsing engines bound via pybind11 to render chip layouts at 60 FPS.
+            Modular ASIC design environment integrating Yosys, OpenROAD, OpenSTA, and Magic VLSI. Features native C++ DEF parsing engines bound via pybind11 to render chip layouts at 60 FPS. Packaged as a standalone Linux AppImage.
           </p>
           <details class="pcard-expand">
             <summary class="pcard-summary">Technical Architecture &amp; Implementation</summary>
             <div class="pcard-full-desc">
               My flagship open-source silicon project under The Silis Foundation. Built to replace fragmented EDA toolchains with a clean, deterministic physical chip design environment:
               <ul>
+                <li><strong>Official Release (v0.1.1 AppImage)</strong>: Publicly deployed binary distribution bundling complete toolchain wrappers and runtime dependencies for one-click x86_64 Linux deployment.</li>
                 <li><strong>Unified Synthesis-to-Physical Plane</strong>: Automated orchestration of Yosys logic synthesis, OpenROAD placement &amp; routing, OpenSTA static timing analysis, and Magic VLSI DRC verification.</li>
                 <li><strong>Hardware Acceleration Engine</strong>: Engineered a native C++ backend parser bound via pybind11 for sub-millisecond DEF layout decoding, multi-million gate layout virtualization, and real-time clock-tree visualization.</li>
                 <li><strong>Focus</strong>: Open-source silicon toolchain democratization, from RTL directly to verified GDSII.</li>
@@ -847,13 +853,14 @@ footer {
         </div>
         <div>
           <div class="pcard-metric">
-            Automated RTL→GDSII Flow · Zero-Friction Open-Source Tapeout
+            Official v0.1.1 Release · Automated RTL→GDSII Flow · AppImage Binaries
           </div>
           <div class="pcard-tags">
             <span class="stag">C++17/20</span>
             <span class="stag">PyQt6</span>
             <span class="stag">OpenROAD</span>
             <span class="stag">Yosys</span>
+            <span class="stag">AppImage</span>
           </div>
         </div>
       </div>
