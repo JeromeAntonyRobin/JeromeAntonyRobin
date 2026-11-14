@@ -831,7 +831,7 @@ footer {
           <div class="pcard-title-row">
             <span class="pcard-title">Silis: RTL-to-GDSII IDE</span>
             <div style="display:flex;gap:6px;align-items:center;">
-              <a href="https://github.com/The-Silis-Foundation/silis/releases" target="_blank" rel="noopener" class="pcard-link" style="color:var(--accent-wire);border-color:var(--accent-wire);background:rgba(218,119,86,0.08);">Release v0.1.1 ↗</a>
+              <a id="silis-release-link" href="https://github.com/The-Silis-Foundation/silis/releases" target="_blank" rel="noopener" class="pcard-link" style="color:var(--accent-wire);border-color:var(--accent-wire);background:rgba(218,119,86,0.08);">Latest Release ↗</a>
               <a href="https://github.com/The-Silis-Foundation/silis" target="_blank" rel="noopener" class="pcard-link">GitHub ↗</a>
             </div>
           </div>
@@ -843,7 +843,7 @@ footer {
             <div class="pcard-full-desc">
               My flagship open-source silicon project under The Silis Foundation. Built to replace fragmented EDA toolchains with a clean, deterministic physical chip design environment:
               <ul>
-                <li><strong>Official Release (v0.1.1 AppImage)</strong>: Publicly deployed binary distribution bundling complete toolchain wrappers and runtime dependencies for one-click x86_64 Linux deployment.</li>
+                <li><strong>Official Production Builds (<span id="silis-release-tag">AppImage</span>)</strong>: Publicly deployed binary distribution bundling complete toolchain wrappers and runtime dependencies for one-click x86_64 Linux deployment.</li>
                 <li><strong>Unified Synthesis-to-Physical Plane</strong>: Automated orchestration of Yosys logic synthesis, OpenROAD placement &amp; routing, OpenSTA static timing analysis, and Magic VLSI DRC verification.</li>
                 <li><strong>Hardware Acceleration Engine</strong>: Engineered a native C++ backend parser bound via pybind11 for sub-millisecond DEF layout decoding, multi-million gate layout virtualization, and real-time clock-tree visualization.</li>
                 <li><strong>Focus</strong>: Open-source silicon toolchain democratization, from RTL directly to verified GDSII.</li>
@@ -852,8 +852,8 @@ footer {
           </details>
         </div>
         <div>
-          <div class="pcard-metric">
-            Official v0.1.1 Release · Automated RTL→GDSII Flow · AppImage Binaries
+          <div class="pcard-metric" id="silis-metric-bar">
+            Latest Public Release · Automated RTL→GDSII Flow · AppImage Binaries
           </div>
           <div class="pcard-tags">
             <span class="stag">C++17/20</span>
@@ -1741,6 +1741,43 @@ async function handleContactSubmit(e) {
     submitBtn.innerHTML = '🚀 Send Message';
   }
 }
+</script>
+
+<script>
+// Dynamic fetch for latest Silis release
+(function() {
+  fetch('https://api.github.com/repos/The-Silis-Foundation/silis/releases/latest')
+    .then(function(res) {
+      if (!res.ok) {
+        // Fallback to all releases if latest is a pre-release
+        return fetch('https://api.github.com/repos/The-Silis-Foundation/silis/releases');
+      }
+      return res.json();
+    })
+    .then(function(data) {
+      var release = Array.isArray(data) ? data[0] : data;
+      if (!release || !release.tag_name) return;
+      var tag = release.tag_name;
+      var releaseUrl = release.html_url || 'https://github.com/The-Silis-Foundation/silis/releases';
+      
+      var linkEl = document.getElementById('silis-release-link');
+      if (linkEl) {
+        linkEl.href = releaseUrl;
+        linkEl.innerHTML = 'Release ' + tag + ' ↗';
+      }
+      var tagEl = document.getElementById('silis-release-tag');
+      if (tagEl) {
+        tagEl.innerText = tag + ' AppImage';
+      }
+      var metricEl = document.getElementById('silis-metric-bar');
+      if (metricEl) {
+        metricEl.innerHTML = 'Release ' + tag + ' · Automated RTL→GDSII Flow · AppImage Binaries';
+      }
+    })
+    .catch(function(err) {
+      console.log('Using default release fallback', err);
+    });
+})();
 </script>
 
 </body>
