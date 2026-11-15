@@ -43,6 +43,7 @@
       "url": "https://jeromeantonyrobin.github.io/JeromeAntonyRobin/",
       "sameAs": [
         "https://github.com/The-Silis-Foundation/silis",
+        "https://github.com/The-Silis-Foundation/silis-cs-edition",
         "https://github.com/The-Silis-Foundation/GEMMrv32",
         "https://github.com/The-Silis-Foundation/PulseGEMM",
         "https://github.com/JeromeAntonyRobin/PulseGEMM",
@@ -86,6 +87,18 @@
         "@id": "https://jeromeantonyrobin.github.io/JeromeAntonyRobin/#person"
       },
       "url": "https://github.com/The-Silis-Foundation/silis"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://github.com/The-Silis-Foundation/silis-cs-edition",
+      "name": "Silis CS Edition",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Linux / Web / GitHub Codespaces",
+      "description": "Cloud ASIC workbench for GitHub Codespaces. Runs as a native VS Code extension with in-repo pre-compiled EDA toolchain binaries and synchronized schematic, waveform, and 2D DEF layout views.",
+      "author": {
+        "@id": "https://jeromeantonyrobin.github.io/JeromeAntonyRobin/#person"
+      },
+      "url": "https://github.com/The-Silis-Foundation/silis-cs-edition"
     },
     {
       "@type": "SoftwareApplication",
@@ -862,6 +875,40 @@ footer {
             <span class="stag">OpenROAD</span>
             <span class="stag">Yosys</span>
             <span class="stag">AppImage</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pcard" data-aos="fade-up" data-aos-delay="30">
+        <div class="pcard-top">
+          <div class="pcard-title-row">
+            <span class="pcard-title">Silis CS Edition</span>
+            <a href="https://github.com/The-Silis-Foundation/silis-cs-edition" target="_blank" rel="noopener" class="pcard-link">GitHub ↗</a>
+          </div>
+          <p class="pcard-desc">
+            Cloud ASIC workbench for GitHub Codespaces. Runs as a native VS Code extension with in-repo pre-compiled EDA toolchain binaries and synchronized schematic, waveform, and 2D DEF layout views.
+          </p>
+          <details class="pcard-expand">
+            <summary class="pcard-summary">Technical Architecture &amp; Implementation</summary>
+            <div class="pcard-full-desc">
+              Browser-based, zero-install silicon workbench engineered for remote EDA execution:
+              <ul>
+                <li><strong>Native VS Code Extension</strong>: Packaged as a clean <code>.vsix</code> extension providing hierarchical RTL trees, command palettes, and custom Webview surfaces directly within Codespaces.</li>
+                <li><strong>In-Repo Pre-Compiled EDA Binaries</strong>: Bundles self-contained, pre-built x86_64 binaries (Yosys, OpenROAD, Verilator) eliminating local toolchain builds or heavy container installations.</li>
+                <li><strong>Multi-Plane Synchronized Views</strong>: Integrated DigitalJS interactive schematics, Intel ROHD waveform viewer, and FastSiliconPeeker DEF layout visualizer for unified verification.</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+        <div>
+          <div class="pcard-metric">
+            Native .vsix · In-Repo EDA Binaries · Codespaces Zero-Setup
+          </div>
+          <div class="pcard-tags">
+            <span class="stag">TypeScript</span>
+            <span class="stag">VS Code Extension</span>
+            <span class="stag">Webviews</span>
+            <span class="stag">Codespaces</span>
           </div>
         </div>
       </div>
