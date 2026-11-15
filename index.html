@@ -42,6 +42,7 @@
       "description": "Open Source Silicon and Digital Design Researcher. Lead architect at The Silis Foundation, building Silis (RTL-to-GDSII ASIC design IDE), GEMMrv32 RISC-V coprocessors, and FPGA hardware accelerators.",
       "url": "https://jeromeantonyrobin.github.io/JeromeAntonyRobin/",
       "sameAs": [
+        "https://jeromeantonyrobin.github.io/JeromeAntonyRobin/silis.html",
         "https://github.com/The-Silis-Foundation/silis",
         "https://github.com/The-Silis-Foundation/silis-cs-edition",
         "https://github.com/The-Silis-Foundation/GEMMrv32",
@@ -844,13 +845,14 @@ footer {
         <div class="pcard-top">
           <div class="pcard-title-row">
             <span class="pcard-title">Silis: RTL-to-GDSII IDE</span>
-            <div style="display:flex;gap:6px;align-items:center;">
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+              <a href="silis.html" class="pcard-link" style="color:var(--silver-bright);border-color:var(--border-light);background:var(--bg-secondary);">Overview &amp; Chronicle ↗</a>
               <a id="silis-release-link" href="https://github.com/The-Silis-Foundation/silis/releases" target="_blank" rel="noopener" class="pcard-link" style="color:var(--accent-wire);border-color:var(--accent-wire);background:rgba(218,119,86,0.08);">Latest Release ↗</a>
               <a href="https://github.com/The-Silis-Foundation/silis" target="_blank" rel="noopener" class="pcard-link">GitHub ↗</a>
             </div>
           </div>
           <p class="pcard-desc">
-            Modular ASIC design environment integrating Yosys, OpenROAD, OpenSTA, and Magic VLSI. Features native C++ DEF parsing engines bound via pybind11 to render chip layouts at 60 FPS. Packaged as a standalone Linux AppImage.
+            Modular ASIC design environment integrating Yosys, OpenROAD, OpenSTA, and Magic VLSI. Features native C++ DEF parsing engines bound via pybind11, tri-way cross-probing, and pre-bundled SkyWater 130nm PDK. Packaged as a standalone Linux AppImage.
           </p>
           <details class="pcard-expand">
             <summary class="pcard-summary">Technical Architecture &amp; Implementation</summary>
