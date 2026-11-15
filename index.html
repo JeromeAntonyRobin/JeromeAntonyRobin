@@ -94,7 +94,7 @@
       "name": "Silis CS Edition",
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "Linux / Web / GitHub Codespaces",
-      "description": "Cloud ASIC workbench for GitHub Codespaces. Runs as a native VS Code extension with in-repo pre-compiled EDA toolchain binaries and synchronized schematic, waveform, and 2D DEF layout views.",
+      "description": "Cloud ASIC workbench for GitHub Codespaces adapting the Silis IDE into a native VS Code extension (.vsix) with in-repo pre-compiled EDA binaries, browser-native Webview visualizers, and synchronized schematic, waveform, and 2D DEF layout cross-probing.",
       "author": {
         "@id": "https://jeromeantonyrobin.github.io/JeromeAntonyRobin/#person"
       },
@@ -882,33 +882,33 @@ footer {
       <div class="pcard" data-aos="fade-up" data-aos-delay="30">
         <div class="pcard-top">
           <div class="pcard-title-row">
-            <span class="pcard-title">Silis CS Edition</span>
+            <span class="pcard-title">Silis CS Edition (Cloud CAD)</span>
             <a href="https://github.com/The-Silis-Foundation/silis-cs-edition" target="_blank" rel="noopener" class="pcard-link">GitHub ↗</a>
           </div>
           <p class="pcard-desc">
-            Cloud ASIC workbench for GitHub Codespaces. Runs as a native VS Code extension with in-repo pre-compiled EDA toolchain binaries and synchronized schematic, waveform, and 2D DEF layout views.
+            Cloud ASIC workbench for GitHub Codespaces. Adapts the Silis IDE into a native VS Code extension (<code style="color:var(--silver-bright);background:rgba(255,255,255,0.06);padding:2px 4px;border-radius:3px;">.vsix</code>) with in-repo pre-compiled EDA toolchain binaries and synchronized schematic, waveform, and 2D DEF layout cross-probing.
           </p>
           <details class="pcard-expand">
             <summary class="pcard-summary">Technical Architecture &amp; Implementation</summary>
             <div class="pcard-full-desc">
-              Browser-based, zero-install silicon workbench engineered for remote EDA execution:
+              Browser-based, zero-install adaptation of the flagship Silis silicon workbench for remote EDA execution:
               <ul>
-                <li><strong>Native VS Code Extension</strong>: Packaged as a clean <code>.vsix</code> extension providing hierarchical RTL trees, command palettes, and custom Webview surfaces directly within Codespaces.</li>
-                <li><strong>In-Repo Pre-Compiled EDA Binaries</strong>: Bundles self-contained, pre-built x86_64 binaries (Yosys, OpenROAD, Verilator) eliminating local toolchain builds or heavy container installations.</li>
-                <li><strong>Multi-Plane Synchronized Views</strong>: Integrated DigitalJS interactive schematics, Intel ROHD waveform viewer, and FastSiliconPeeker DEF layout visualizer for unified verification.</li>
+                <li><strong>Native VS Code Extension</strong>: Pure <code style="color:var(--silver-bright);background:rgba(255,255,255,0.06);padding:2px 4px;border-radius:3px;">.vsix</code> implementation bringing Silis IDE workflows into GitHub Codespaces with hierarchical RTL navigation, command palettes, and Webview surfaces.</li>
+                <li><strong>In-Repo Pre-Compiled EDA Binaries</strong>: Bundles self-contained, pre-built x86_64 toolchain binaries (Yosys, OpenROAD, Verilator) eliminating local toolchain builds or heavy container installations.</li>
+                <li><strong>Tri-Way Synchronized Views</strong>: Integrated DigitalJS interactive schematics, Intel ROHD waveform viewer, and FastSiliconPeeker 2D DEF layout visualizer with live cross-probing.</li>
               </ul>
             </div>
           </details>
         </div>
         <div>
           <div class="pcard-metric">
-            Native .vsix · In-Repo EDA Binaries · Codespaces Zero-Setup
+            Native .vsix · In-Repo EDA Binaries · Tri-Way Cross-Probing
           </div>
           <div class="pcard-tags">
             <span class="stag">TypeScript</span>
             <span class="stag">VS Code Extension</span>
-            <span class="stag">Webviews</span>
             <span class="stag">Codespaces</span>
+            <span class="stag">Webviews</span>
           </div>
         </div>
       </div>
